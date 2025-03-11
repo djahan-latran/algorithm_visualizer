@@ -1,0 +1,11 @@
+- implement the algorithms as generators when they run so every step where 
+  the bar graphs have to be redrawn it yields to the game loop inside the GuiManager
+  and blits the current surface states
+- the visualizer should have an attribute (dictionary) that the algorithm takes as a parameter and where
+  the algorithm stores the state of certain values as the color that it should represent 
+  before each yield (e.g. sorted values go into
+  "green" and selected values go into "lightgrey")
+-  1. First create "bubble sort" button on the left main menu.
+   2. Clicking it should trigger a stillframe with an unsorted array displayed as bar graphs
+   3. Implement a Play-Button on the right that starts the Algorithm and Animation
+   4. Animation should be updated with each yield
