@@ -4,8 +4,11 @@ from visualizer import AnimationCanvas
 
 class Parameters:
     def __init__(self, size, speed):
-        self.values = random.sample(range(100), self.size)
+        self.size = size
         self.speed = speed
+
+    def create_values(self):
+        return random.sample(range(100), self.size)
 
 class LinearSearch:
     def __init__(self):
