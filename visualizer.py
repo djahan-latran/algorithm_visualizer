@@ -14,45 +14,58 @@ class AnimationCanvas:
         self.sortd_bar_cl = (50, 255, 50)
         self.red_bar_cl = (200, 50, 50)
 
+        #Label color
+        self.label_color = (250, 250, 250)
+
+        #Distance from bar rect to label
+        self.label_pad = 3
+
+        #Distance from surface sides
+        self.side_pad = 0
+        
+        #Bevel on corners of the bars
+        self.bar_bevel = 2
+
     def create_surface(self, surface_size):
-        self.surface = pg.Surface(surface_size)
+        self.surface_size = surface_size
+        self.surface = pg.Surface(self.surface_size)
+        self.side_pad = int(self.surface_size[0] / 32)
 
-    # def draw_bar_graphs(self):
-    #     #fill the surface with bg color
-    #     screen.fill(BG_COLOR)
+    def draw_bar_graphs(self, values, draw_info=None):
+        #fill the surface with bg color
+        self.surface.fill(self.background_cl)
 
-    #     draw_title(algorithm= algo_name, screen= screen)
+        #draw_title(algorithm= algo_name, screen= screen)
 
-    #     #calc the spacing between bar graphs and their size
-    #     spaces = (len(nums) * 2) - 1
-    #     bar_width = int((SCREEN_WIDTH - (PADDING * 2)) / spaces) 
+        #calc the spacing between bar graphs and their size
+        spaces = (len(values) * 2) - 1
+        bar_width = int((self.surface_size[0] - (self.side_pad * 2)) / spaces) 
 
-    #     #set font size relative to bar_width
-    #     main_font = pg.font.SysFont("Arial", bar_width-8, bold=True)
+        #set font size relative to bar_width
+        main_font = pg.font.SysFont("Arial", bar_width - self.label_pad, bold=True)
 
-    #     #calc bar height and coordinates and draw the rectangles
-    #     for i, value in enumerate(nums):
-    #         bar_height = value * 3
-    #         x_coord = i * bar_width * 2 + PADDING
-    #         y_coord = Y_COORD_BAR - bar_height
-    #         bar_rect = pg.Rect(x_coord, y_coord, bar_width, bar_height)
+        #calc bar height and coordinates and draw the rectangles
+        for i, value in enumerate(values):
+            bar_height = value * 3
+            x_coord = i * bar_width * 2 + self.side_pad
+            y_coord = self.surface_size[1] - bar_height
+            bar_rect = pg.Rect(x_coord, y_coord, bar_width, bar_height)
 
-    #         if drawing_info["green"] and value in drawing_info["green"]:
-    #             pg.draw.rect(screen, SORTD_BAR_COLOR, bar_rect, border_radius= BAR_BEVEL)
-    #         elif drawing_info["red"] and value in drawing_info["red"]:
-    #             pg.draw.rect(screen, RED_BAR_COLOR, bar_rect, border_radius= BAR_BEVEL)
-    #         elif drawing_info["lightgrey"] and value in drawing_info["lightgrey"]:
-    #             pg.draw.rect(screen, CURR_BAR_COLOR, bar_rect, border_radius= BAR_BEVEL)
-    #         else:
-    #             pg.draw.rect(screen, DEF_BAR_COLOR, bar_rect, border_radius= BAR_BEVEL)
+            if draw_info and value in draw_info["positive"]:
+                pg.draw.rect(self.surface, self.sortd_bar_cl, bar_rect, border_radius= self.bar_bevel)
+            elif draw_info and value in draw_info["negative"]:
+                pg.draw.rect(self.surface, self.red_bar_cl, bar_rect, border_radius= self.bar_bevel)
+            elif draw_info and value in draw_info["neutral"]:
+                pg.draw.rect(self.surface, self.curr_bar_cl, bar_rect, border_radius= self.bar_bevel)
+            else:
+                pg.draw.rect(self.surface, self.def_bar_cl, bar_rect, border_radius= self.bar_bevel)
+            
+            #blit the value on bar graph
+            value_label = main_font.render(f"{value}", True, self.label_color)
+            value_rect = value_label.get_rect()
+            value_rect.midbottom = (x_coord + bar_width/2, y_coord)
+            self.surface.blit(value_label, value_rect)
 
-    #         value_label = main_font.render(f"{value}", True, LABEL_COLOR)
-    #         value_rect = value_label.get_rect()
-    #         value_rect.midbottom = (x_coord + bar_width/2, Y_COORD_BAR)
-    #         screen.blit(value_label, value_rect)
-
-    #     pg.time.wait(SPEED)
-    #     pg.display.update()
 
     def draw_board(self):
         pass
