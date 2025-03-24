@@ -1,11 +1,18 @@
-- implement the algorithms as generators when they run so every step where 
-  the bar graphs have to be redrawn it yields to the game loop inside the GuiManager
-  and blits the current surface states
-- the visualizer should have an attribute (dictionary) that the algorithm takes as a parameter and where
-  the algorithm stores the state of certain values as the color that it should represent 
-  before each yield (e.g. sorted values go into
-  "green" and selected values go into "lightgrey")
--  1. First create "bubble sort" button on the left main menu.
-   2. Clicking it should trigger a stillframe with an unsorted array displayed as bar graphs
-   3. Implement a Play-Button on the right that starts the Algorithm and Animation
-   4. Animation should be updated with each yield
+- Scrollable area of scroll container should adjust to total height of all buttons
+- Algorithm class that init's the basic parameter like self.nums, self.value_info etc and passes those to
+  more specific algorithm classe e.g. BubbleSort, SelectionSort etc.
+- size slider DONE
+- binary search DONE
+- linear and binary search need value to be found displayed
+- implement breadth-first-search
+
+BUGS
+
+- General
+  - if you play an algorithm and you press pause and then switch to another algorithm 
+    and press play again, the algorithm continues from previous state instead of starting all over
+    with the new values FIXED
+
+- Binary search
+  - sometimes no green value at the end
+  - sometimes "self.value_info["neutral"] = [nums[mid]]" -> list index out of range

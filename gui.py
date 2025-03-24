@@ -1,8 +1,9 @@
 import pygame as pg
 import pygame_gui as pg_gui
 from visualizer import AnimationCanvas
-from algorithms import Parameters, BubbleSort, SelectionSort, InsertionSort
+from algorithms import Parameters, BubbleSort, SelectionSort, InsertionSort, LinearSearch, BinarySearch, Bfs
 import random
+import time
 
 class GuiManager:
     def __init__(self, anim_canvas):
@@ -67,14 +68,28 @@ class GuiManager:
 
         basic_search_btn_amount = 1
         
-        linear_search = Button(pos=(0, 45), size=(180, 45), label= "Linear Search", manager= self.manager, vis= 1, container= basic_search_scroll_panel.element)
+        linear_search_btn = Button(pos=(0, 45), size=(180, 45), label= "Linear Search", manager= self.manager, vis= 1, container= basic_search_scroll_panel.element)
         basic_search_btn_amount += 1
         
-        binary_search = Button(pos=(0, 90), size=(180, 45), label= "Binary Search", manager= self.manager, vis= 1, container= basic_search_scroll_panel.element)
+        binary_search_btn = Button(pos=(0, 90), size=(180, 45), label= "Binary Search", manager= self.manager, vis= 1, container= basic_search_scroll_panel.element)
         basic_search_btn_amount += 1
 
         basic_search_scroll_cont.element.set_scrollable_area_dimensions((180, 45 * basic_search_btn_amount))
 
+
+        #Create pathinfing scroll container and scroll panel inside
+        pathfinding_scroll_cont = ScrollContainer(pos= (0, 365), size=(200, 200), manager= self.manager) #Actual visible size of container
+        pathfinding_scroll_panel = Panel(pos= (0, 0), size= (180, 1200), manager= self.manager, container= pathfinding_scroll_cont.element) #Size of scrollable area
+
+        pathfinding = Button(pos=(0, 0), size=(180, 45), label= "Pathfinding", manager= self.manager, vis= 1, container= pathfinding_scroll_panel.element)
+        pathfinding.element.disable()
+
+        pathfinding_btn_amount = 1
+
+        bfs_btn = Button(pos=(0, 45), size= (180, 45), label= "Breadth-First-Search", manager= self.manager, vis= 1, container= pathfinding_scroll_panel.element)
+        pathfinding_btn_amount += 1
+
+        pathfinding_scroll_cont.element.set_scrollable_area_dimensions((180, 45 * pathfinding_btn_amount))
 
         #Create play button
         play_btn = Button(pos= (890, 280), size= (65, 25), label= "Play", manager= self.manager, vis= 0)
@@ -87,25 +102,39 @@ class GuiManager:
 
 
         #Create sliders
-        size_slider_rect = pg.Rect((890,100), (200,50))
-        size_slider = pg_gui.elements.UIHorizontalSlider(size_slider_rect, 100, (0,200), self.manager)
-        size_slider.enable()
+        size_slider_rect = pg.Rect((890,100), (250,50))
+        size_slider = pg_gui.elements.UIHorizontalSlider(size_slider_rect, 20, (10, 100), self.manager, click_increment= 1)
+        size_slider.hide()
 
+        speed_slider_rect = pg.Rect((890,160), (250,50))
+        speed_slider = pg_gui.elements.UIHorizontalSlider(speed_slider_rect, 50, (1, 100), self.manager, click_increment= 1)
+        speed_slider.hide()
+        
         #First no algorithm is selected, therefore no control-buttons show up
         selected_algo = None
 
         #Create surface attribute of the animation canvas
         self.anim_canvas.create_surface(self.anim_canvas_size)
         
+        #Initialize a value to find by search algorithms
+        self.value_to_find = None
+        #Initialize a generator for the algorithm steps
         self.algo_generator = None
         #Break condition for App running
         self.running = True
         #Yet no algo started
         self.algo_running = False
+
+        
+        surface_update_interval = 1/50
+        surface_updated = time.time()
+
         #Application loop
         while self.running:
 
             time_delta = clock.tick(60) / 1000
+            
+            current_time = time.time()
 
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -117,22 +146,85 @@ class GuiManager:
                 #Handle events
                 if event.type == pg_gui.UI_BUTTON_PRESSED: 
 
-                    #Handle Bubble Sort button
-                    if event.ui_element == bubb_sort_btn.element:
+                    
+                    #Handle Linear Search button
+                    if event.ui_element == linear_search_btn.element:
+                        #If an algo is running and another algo button is pressed it stops running
+                        self.algo_running = False
+
+                        #Control buttons and parameter sliders get shown if not already
+                        if not play_btn.vis:
+                            play_btn.element.show()
+                            reset_btn.element.show()
+                            pause_btn.element.show()
+                            size_slider.show()
+                            size_slider.enable()
+                            speed_slider.show()
+                            speed_slider.enable()
+                        
+                        #Save what algo was pressed so the play button knows what algo to run
+                        selected_algo = "Linear Search"
+
+                        #Set default values
+                        parameters = Parameters(size= 20)
+                        self.values = parameters.create_values()
+                        self.value_to_find = parameters.create_value_to_find()
+
+                        #Show default values
+                        self.anim_canvas.draw_bar_graphs(self.values)
+                        
+                        #Create the generator of the chosen algo
+                        lin_search = LinearSearch(self.values, self.anim_canvas, self.value_to_find)
+                        self.algo_generator = lin_search.run()
+
+                    elif event.ui_element == binary_search_btn.element:
                         self.algo_running = False
 
                         if not play_btn.vis:
                             play_btn.element.show()
                             reset_btn.element.show()
                             pause_btn.element.show()
+                            size_slider.show()
+                            size_slider.enable()
+                            speed_slider.show()
+                            speed_slider.enable()
+
+                        selected_algo = "Binary Search"
+
+                        parameters = Parameters(size= 20)
+                        self.values = parameters.create_values()
+                        self.value_to_find = parameters.create_value_to_find()
+                        self.values.sort()
+
+                        self.anim_canvas.draw_bar_graphs(self.values)
+                        
+                        bin_search = BinarySearch(self.values, self.anim_canvas, self.value_to_find)
+                        self.algo_generator = bin_search.run(self.values)
+
+                    #Handle Bubble Sort button
+                    elif event.ui_element == bubb_sort_btn.element:
+                        self.algo_running = False
+
+                        if not play_btn.vis:
+                            play_btn.element.show()
+                            reset_btn.element.show()
+                            pause_btn.element.show()
+                            size_slider.show()
+                            size_slider.enable()
+                            speed_slider.show()
+                            speed_slider.enable()
 
                         selected_algo = "Bubble Sort"
 
-                        parameters = Parameters(size= 20,speed= 100)
+                        parameters = Parameters(size= 20)
                         self.values = parameters.create_values()
-                        self.algo_speed = parameters.speed
                         
                         self.anim_canvas.draw_bar_graphs(self.values)
+                        
+                        #If another algorithm was playing before and got paused
+                        #this is going to reset the values if another algorithm gets chosen
+                        bubble_sort = BubbleSort(self.values, self.anim_canvas)
+                        self.algo_generator = bubble_sort.run()
 
                     #Handle Selection Sort button
                     elif event.ui_element == sel_sort_btn.element:
@@ -141,14 +233,22 @@ class GuiManager:
                             play_btn.element.show()
                             reset_btn.element.show()
                             pause_btn.element.show()
+                            size_slider.show()
+                            size_slider.enable()
+                            speed_slider.show()
+                            speed_slider.enable()
 
                         selected_algo = "Selection Sort"
 
-                        parameters = Parameters(size= 20,speed= 50)
+                        parameters = Parameters(size= 20)
                         self.values = parameters.create_values()
-                        self.algo_speed = parameters.speed
 
                         self.anim_canvas.draw_bar_graphs(self.values)
+
+                        #If another algorithm was playing before and got paused
+                        #this is going to reset the values if another algorithm gets chosen
+                        sel_sort = SelectionSort(self.values, self.anim_canvas)
+                        self.algo_generator = sel_sort.run()
 
                     #Handle Insertion Sort button
                     elif event.ui_element == in_sort_btn.element:
@@ -157,14 +257,35 @@ class GuiManager:
                             play_btn.element.show()
                             reset_btn.element.show()
                             pause_btn.element.show()
+                            size_slider.show()
+                            size_slider.enable()
+                            speed_slider.show()
+                            speed_slider.enable()
 
                         selected_algo = "Insertion Sort"
 
-                        parameters = Parameters(size= 20, speed= 50)
+                        parameters = Parameters(size= 20)
                         self.values = parameters.create_values()
-                        self.algo_speed = parameters.speed
 
                         self.anim_canvas.draw_bar_graphs(self.values)
+
+                        #If another algorithm was playing before and got paused
+                        #this is going to reset the values if another algorithm gets chosen
+                        in_sort = InsertionSort(self.values, self.anim_canvas)
+                        self.algo_generator = in_sort.run()
+
+                    #Handle Breadth-First-Search button
+                    elif event.ui_element == bfs_btn.element:
+                        self.algo_running = False
+                        if not play_btn.vis:
+                            play_btn.element.show()
+                            reset_btn.element.show()
+                            pause_btn.element.show()
+                        
+                        selected_algo = "Breadth-First-Search"
+
+                        self.anim_canvas.create_def_board()
+                        self.anim_canvas.draw_board()
 
                     #Handle Play button
                     elif event.ui_element == play_btn.element:
@@ -174,41 +295,81 @@ class GuiManager:
                                 bubble_sort = BubbleSort(self.values, self.anim_canvas)
                                 self.algo_generator = bubble_sort.run()
                             self.algo_running = True
+                            size_slider.disable()
 
                         elif selected_algo == "Selection Sort":
-                            sel_sort = SelectionSort(self.values, self.anim_canvas)
-                            self.algo_generator = sel_sort.run()
+                            if not self.algo_generator:
+                                sel_sort = SelectionSort(self.values, self.anim_canvas)
+                                self.algo_generator = sel_sort.run()
                             self.algo_running = True
+                            size_slider.disable()
 
                         elif selected_algo == "Insertion Sort":
-                            in_sort = InsertionSort(self.values, self.anim_canvas)
-                            self.algo_generator = in_sort.run()
+                            if not self.algo_generator:
+                                in_sort = InsertionSort(self.values, self.anim_canvas)
+                                self.algo_generator = in_sort.run()
                             self.algo_running = True
+                            size_slider.disable()
+
+                        elif selected_algo == "Linear Search":
+                            if not self.algo_generator:
+                                lin_search = LinearSearch(self.values, self.anim_canvas, self.value_to_find)
+                                self.algo_generator = lin_search.run()
+                            self.algo_running = True
+                            size_slider.disable()
+
+                        elif selected_algo == "Binary Search":
+                            if not self.algo_generator:
+                                bin_search = BinarySearch(self.values, self.anim_canvas, self.value_to_find)
+                                self.algo_generator = bin_search.run(self.values)
+                            self.algo_running = True
+                            size_slider.disable()
+
+                        elif selected_algo == "Breadth-First-Search":
+                            if not self.algo_generator:
+                                bfs = Bfs(self.anim_canvas)
 
                     #Handle Reset button
                     elif event.ui_element == reset_btn.element:
                         self.algo_running = False
                         self.algo_generator = None
-                        self.values = Parameters(size= 20,speed= 50).create_values()
+                        
+                        self.values = parameters.create_values()
+
+                        if self.value_to_find:
+                            self.value_to_find = parameters.create_value_to_find()
+                            
+                        if selected_algo == "Binary Search":
+                            self.values.sort()
+
+                        size_slider.enable()
                         self.anim_canvas.draw_bar_graphs(self.values)
 
                     #Handle Pause button
                     elif event.ui_element == pause_btn.element:
                         self.algo_running = False
 
-                #Handel size slider
+                #Handle sliders
                 if event.type == pg_gui.UI_HORIZONTAL_SLIDER_MOVED:
+                    if event.ui_element == speed_slider:
+                        surface_update_interval = 1 / speed_slider.get_current_value()
+
                     if event.ui_element == size_slider:
-                        self.algo_speed = size_slider.get_current_value()
-                        print(size_slider.get_current_value())
-                        
+                        new_size = size_slider.get_current_value()
+                        parameters.size = new_size
+                        self.values = parameters.create_values()
+                        if selected_algo == "Binary Search":
+                            self.values.sort()
+                        self.anim_canvas.draw_bar_graphs(self.values)
 
 
-            if self.algo_running:
+            if self.algo_running and current_time - surface_updated >= surface_update_interval:
                 try:
                     next(self.algo_generator)
+                    surface_updated = current_time
                 except StopIteration:
                     self.algo_running = False
+                    speed_slider.set_current_value(1/20)
                     self.algo_generator = None
             
             #Fill background
@@ -220,7 +381,7 @@ class GuiManager:
             
             #Blit animation surface
             self.screen.blit(self.anim_canvas.surface, self.anim_canvas_pos)
-            self.delay(self.algo_speed)
+            #self.delay(self.algo_speed)
             self.update()
 
         pg.quit()
