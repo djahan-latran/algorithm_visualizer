@@ -1,7 +1,8 @@
 import pygame as pg
 import pygame_gui as pg_gui
 from visualizer import AnimationCanvas
-from algorithms import Parameters, BubbleSort, SelectionSort, InsertionSort, LinearSearch, BinarySearch, Bfs
+from algorithms import BubbleSort, SelectionSort, InsertionSort, LinearSearch, BinarySearch, Bfs
+from inputs import Parameters, Board
 import random
 import time
 
@@ -12,10 +13,12 @@ class GuiManager:
 
         #Animation window instance
         self.anim_canvas = anim_canvas
+        #Amount of rectangles cols and rows
+        self.rect_amount = (34, 20)
 
         #Animation window position, size and color
         self.anim_canvas_pos = (185, 50)
-        self.anim_canvas_size = (650, 350)
+        self.anim_canvas_size = (680, 400)
         self.anim_canvas_cl = (100, 100, 100)
 
         #Input values for algorithms
@@ -162,6 +165,11 @@ class GuiManager:
                             speed_slider.show()
                             speed_slider.enable()
                         
+                        #If there was a checkerboard drawn before set it to None
+                        #so the Reset button won't trigger drawing a new one
+                        if checkerboard:
+                            checkerboard = None
+
                         #Save what algo was pressed so the play button knows what algo to run
                         selected_algo = "Linear Search"
 
@@ -189,6 +197,9 @@ class GuiManager:
                             speed_slider.show()
                             speed_slider.enable()
 
+                        if checkerboard:
+                            checkerboard = None
+
                         selected_algo = "Binary Search"
 
                         parameters = Parameters(size= 20)
@@ -213,6 +224,9 @@ class GuiManager:
                             size_slider.enable()
                             speed_slider.show()
                             speed_slider.enable()
+                        
+                        if checkerboard:
+                            checkerboard = None
 
                         selected_algo = "Bubble Sort"
 
@@ -238,6 +252,9 @@ class GuiManager:
                             speed_slider.show()
                             speed_slider.enable()
 
+                        if checkerboard:
+                            checkerboard = None
+
                         selected_algo = "Selection Sort"
 
                         parameters = Parameters(size= 20)
@@ -262,6 +279,9 @@ class GuiManager:
                             speed_slider.show()
                             speed_slider.enable()
 
+                        if checkerboard:
+                            checkerboard = None
+
                         selected_algo = "Insertion Sort"
 
                         parameters = Parameters(size= 20)
@@ -281,11 +301,14 @@ class GuiManager:
                             play_btn.element.show()
                             reset_btn.element.show()
                             pause_btn.element.show()
-                        
+                            speed_slider.hide()
+                            size_slider.hide()
+
                         selected_algo = "Breadth-First-Search"
 
-                        self.anim_canvas.create_def_board()
-                        self.anim_canvas.draw_board()
+                        checkerboard = Board(self.anim_canvas_size, self.rect_amount)
+
+                        self.anim_canvas.draw_board(checkerboard)
 
                     #Handle Play button
                     elif event.ui_element == play_btn.element:
@@ -327,23 +350,30 @@ class GuiManager:
 
                         elif selected_algo == "Breadth-First-Search":
                             if not self.algo_generator:
-                                bfs = Bfs(self.anim_canvas)
+                                bfs = Bfs(self.anim_canvas, checkerboard)
+                                self.algo_generator = bfs.run()
+                            self.algo_running = True
 
                     #Handle Reset button
                     elif event.ui_element == reset_btn.element:
                         self.algo_running = False
                         self.algo_generator = None
                         
-                        self.values = parameters.create_values()
+                        if checkerboard:
+                            checkerboard = Board(self.anim_canvas_size, self.rect_amount)
+                            self.anim_canvas.draw_board(checkerboard)
 
-                        if self.value_to_find:
-                            self.value_to_find = parameters.create_value_to_find()
-                            
-                        if selected_algo == "Binary Search":
-                            self.values.sort()
+                        else:
+                            self.values = parameters.create_values()
 
-                        size_slider.enable()
-                        self.anim_canvas.draw_bar_graphs(self.values)
+                            if self.value_to_find:
+                                self.value_to_find = parameters.create_value_to_find()
+                                
+                            if selected_algo == "Binary Search":
+                                self.values.sort()
+
+                            size_slider.enable()
+                            self.anim_canvas.draw_bar_graphs(self.values)
 
                     #Handle Pause button
                     elif event.ui_element == pause_btn.element:
@@ -362,6 +392,16 @@ class GuiManager:
                             self.values.sort()
                         self.anim_canvas.draw_bar_graphs(self.values)
 
+            if selected_algo == "Breadth-First-Search" and pg.mouse.get_pressed()[0]:
+                mouse_pos = pg.mouse.get_pos()
+                mouse_x, mouse_y = mouse_pos[0], mouse_pos[1]
+                print(mouse_x, mouse_y)
+                if self.anim_canvas_pos[0] < mouse_x < self.anim_canvas_pos[0] + self.anim_canvas_size[0] and self.anim_canvas_pos[1] < mouse_y < self.anim_canvas_pos[1] + self.anim_canvas_size[1]:
+                    canvas_x, canvas_y = mouse_x - self.anim_canvas_pos[0], mouse_y - self.anim_canvas_pos[1]
+                    rect_no_x = canvas_x // checkerboard.rect_size
+                    rect_no_y = canvas_y // checkerboard.rect_size
+                    checkerboard.raster[rect_no_y][rect_no_x] = 1
+                    self.anim_canvas.draw_board(checkerboard)
 
             if self.algo_running and current_time - surface_updated >= surface_update_interval:
                 try:
