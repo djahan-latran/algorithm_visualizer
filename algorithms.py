@@ -3,22 +3,6 @@ import random
 from visualizer import AnimationCanvas
 from collections import deque
 
-class Parameters:
-    def __init__(self, size):
-        #Initialize size and speed attributes
-        self.size = size
-
-    def create_values(self):
-        #Create values attribute
-        self.values = random.sample(range(100), self.size)
-        return self.values
-
-    def create_value_to_find(self):
-        if self.values:
-            idx = random.randint(0, self.size-1)
-            value_to_find = self.values[idx]
-            return value_to_find
-
 
 class LinearSearch:
     def __init__(self, nums, canvas, value):
@@ -184,20 +168,21 @@ class QuickSort:
 
 
 class Bfs:
-    def __init__(self, canvas):
+    def __init__(self, canvas, board):
         self.canvas = canvas
+        self.board = board
         self.rect_info = {"current": None, "visited": None}
-    
+        self.start_pos = (0, 0)
+        self.end_pos = (board.rows, board.cols)
+
     def run(self):
-        rows = len(self.board)
-        cols = len(self.board[0])
-        queue = deque([start_pos])
-        visited = set([start_pos])
+        queue = deque([self.start_pos])
+        visited = set([self.start_pos])
         directions = [(1, 0), (-1, 0), (0, -1), (0, 1)] #right, left, up, down
 
-        for i in range(rows):
-            for j in range(cols):
-                if board[i][j] == 1:
+        for i in range(self.board.rows):
+            for j in range(self.board.cols):
+                if self.board.raster[i][j] == 1:
                     visited.add((i, j))
 
         while queue:
@@ -205,15 +190,19 @@ class Bfs:
             x, y = queue.popleft()
             current = (x, y)
 
-            if (x, y) == end_pos:
+            if (x, y) == self.end_pos:
                 return 
 
-            draw_board(screen, board, visited, end_pos, current)
+            self.rect_info["current"] = current
+            self.rect_info["visited"] = visited
+            print(self.rect_info)
+            self.canvas.draw_board(self.board, self.rect_info)
+            yield
 
             for dx, dy in directions:
                 new_x, new_y = x + dx, y + dy
                 
-                if 0 <= new_x < rows and 0 <= new_y < cols and (new_x, new_y) not in visited:
+                if 0 <= new_x < self.board.rows and 0 <= new_y < self.board.cols and (new_x, new_y) not in visited:
                     queue.append((new_x, new_y))
                     visited.add((new_x, new_y))
 
