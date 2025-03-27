@@ -209,8 +209,30 @@ class Bfs:
         return print("Error: No end-pos found")
 
 class Dfs:
-    def __init__(self):
-        pass
+    def __init__(self, canvas, board):
+        self.canvas = canvas
+        self.board = board
+        self.visited = set()
+        self.end_pos = (board.rows, board.cols)
+        self.pos_x = 0
+        self.pos_y = 0
+        self.directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+
+    def run(self, pos_x, pos_y):
+        if  pos_x < 0 or pos_y < 0 or pos_x >= self.board.rows or pos_y >= self.board.cols or (pos_x, pos_y) in self.visited or self.board[pos_x][pos_y] == 1:
+            return False
+        
+        self.visited.add((pos_x, pos_y))
+
+        if (pos_x, pos_y) == self.end_pos:
+            print(f"VALUE FOUND at {pos_x}, {pos_y}")
+            return True
+
+        for dx, dy in self.directions:
+            if self.run(pos_x + dx, pos_y + dy):
+                return True
+        
+        return False
 
 
 class Astar:
