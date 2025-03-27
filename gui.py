@@ -37,7 +37,7 @@ class GuiManager:
 
         #Initiate the gui manager
         self.manager = pg_gui.UIManager((self.screen_size))
-        
+        self.manager.ui_theme.load_theme("themes.json")
 
         #Create basic-sorts scroll container and scroll panel inside
         basic_sorts_scroll_cont = ScrollContainer(pos= (0, 50), size=(200, 200), manager= self.manager) #Actual visible size of container
@@ -95,22 +95,22 @@ class GuiManager:
         pathfinding_scroll_cont.element.set_scrollable_area_dimensions((180, 45 * pathfinding_btn_amount))
 
         #Create play button
-        play_btn = Button(pos= (890, 280), size= (65, 25), label= "Play", manager= self.manager, vis= 0)
+        play_btn = Button(pos= (890, 280), size= (65, 25), label= "Play", manager= self.manager, vis= 0, id= "#control_button")
         
         #Create reset button
-        reset_btn = Button(pos= (990, 280), size= (65, 25), label= "Reset", manager= self.manager, vis= 0)
+        reset_btn = Button(pos= (990, 280), size= (65, 25), label= "Reset", manager= self.manager, vis= 0, id= "#control_button")
 
         #Create reset button
-        pause_btn = Button(pos= (1090, 280), size= (65, 25), label= "Pause", manager= self.manager, vis= 0)
+        pause_btn = Button(pos= (1090, 280), size= (65, 25), label= "Pause", manager= self.manager, vis= 0, id= "#control_button")
 
 
         #Create sliders
-        size_slider_rect = pg.Rect((890,100), (250,50))
-        size_slider = pg_gui.elements.UIHorizontalSlider(size_slider_rect, 20, (10, 100), self.manager, click_increment= 1)
+        size_slider_rect = pg.Rect((890,100), (250, 25))
+        size_slider = pg_gui.elements.UIHorizontalSlider(size_slider_rect, 20, (10, 100), self.manager, click_increment= 2)
         size_slider.hide()
 
-        speed_slider_rect = pg.Rect((890,160), (250,50))
-        speed_slider = pg_gui.elements.UIHorizontalSlider(speed_slider_rect, 50, (1, 100), self.manager, click_increment= 1)
+        speed_slider_rect = pg.Rect((890,160), (250, 25))
+        speed_slider = pg_gui.elements.UIHorizontalSlider(speed_slider_rect, 50, (1, 100), self.manager, click_increment= 2)
         speed_slider.hide()
         
         #First no algorithm is selected, therefore no control-buttons show up
@@ -131,6 +131,10 @@ class GuiManager:
         
         surface_update_interval = 1/50
         surface_updated = time.time()
+
+        checkerboard = None
+        
+        header_rect = pg.Rect((0,0), (self.screen_size[0], 50))
 
         #Application loop
         while self.running:
@@ -421,7 +425,8 @@ class GuiManager:
             
             #Blit animation surface
             self.screen.blit(self.anim_canvas.surface, self.anim_canvas_pos)
-            #self.delay(self.algo_speed)
+            pg.draw.rect(self.screen, (20,20,20), header_rect) #make color a variable
+
             self.update()
 
         pg.quit()
@@ -433,16 +438,18 @@ class GuiManager:
         pg.time.delay(time)
 
 class Button:
-    def __init__(self, pos, size, label, manager, vis, container=None):
+    def __init__(self, pos, size, label, manager, vis, id=None, container=None):
         self.pos = pos
         self.size = size
         self.label = label
         self.vis = vis
+        self.id = id
         self.element = pg_gui.elements.UIButton(
             relative_rect= pg.Rect(self.pos, self.size),
             text= f"{self.label}",
             manager= manager,
             visible= self.vis,
+            object_id= id,
             container= container
         )
 
