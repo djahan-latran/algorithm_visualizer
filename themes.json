@@ -60,5 +60,13 @@
             "normal_bg": "#383838",
             "normal_text": "#ffffff"
         }
+    },
+
+    "#info_text_box":
+    {
+        "colours":
+        {
+            "dark_bg": "#525252"
+        }
     }
 }
