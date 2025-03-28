@@ -5,6 +5,8 @@
 - [x] binary search 
 - linear and binary search need value to be found displayed
 - [x] implement breadth-first-search
+- implement depth-first-search
+- finish the ui-template
 
 BUGS
 
@@ -22,3 +24,6 @@ BUGS
 
 - Pathfinding
   - speed is same as set speed in bar graph visualizations -> add speed slider
+
+- BFS
+  - not finding the 'value' -> check coordinate and value 
