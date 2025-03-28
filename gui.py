@@ -21,6 +21,9 @@ class GuiManager:
         self.anim_canvas_size = (680, 400)
         self.anim_canvas_cl = (100, 100, 100)
 
+        #Theme colours
+        self.teal_cl = (51, 216, 245)
+
         #Input values for algorithms
         self.values = None
 
@@ -38,6 +41,11 @@ class GuiManager:
         #Initiate the gui manager
         self.manager = pg_gui.UIManager((self.screen_size))
         self.manager.ui_theme.load_theme("themes.json")
+
+        #Draw Ui layout except buttons, animation surface and panels
+        header_rect = pg.Rect((0,0), (self.screen_size[0], 50))
+        info_circle_dim = 45
+        info_circle_rect = pg.Rect((1035 - info_circle_dim / 2, 360 - info_circle_dim / 2), (info_circle_dim, info_circle_dim))
 
         #Create basic-sorts scroll container and scroll panel inside
         basic_sorts_scroll_cont = ScrollContainer(pos= (0, 50), size=(200, 200), manager= self.manager) #Actual visible size of container
@@ -81,7 +89,7 @@ class GuiManager:
 
 
         #Create pathinfing scroll container and scroll panel inside
-        pathfinding_scroll_cont = ScrollContainer(pos= (0, 365), size=(200, 200), manager= self.manager) #Actual visible size of container
+        pathfinding_scroll_cont = ScrollContainer(pos= (0, 365), size=(200, 240), manager= self.manager) #Actual visible size of container
         pathfinding_scroll_panel = Panel(pos= (0, 0), size= (180, 1200), manager= self.manager, container= pathfinding_scroll_cont.element) #Size of scrollable area
 
         pathfinding = Button(pos=(0, 0), size=(180, 45), label= "Pathfinding", manager= self.manager, vis= 1, container= pathfinding_scroll_panel.element)
@@ -90,6 +98,15 @@ class GuiManager:
         pathfinding_btn_amount = 1
 
         bfs_btn = Button(pos=(0, 45), size= (180, 45), label= "Breadth-First-Search", manager= self.manager, vis= 1, container= pathfinding_scroll_panel.element)
+        pathfinding_btn_amount += 1
+
+        dfs_btn = Button(pos=(0, 45*pathfinding_btn_amount), size= (180, 45), label= "Depth-First-Search", manager= self.manager, vis= 1, container= pathfinding_scroll_panel.element)
+        pathfinding_btn_amount += 1
+
+        astar_btn = Button(pos=(0, 45*pathfinding_btn_amount), size= (180, 45), label= "A*Search", manager= self.manager, vis= 1, container= pathfinding_scroll_panel.element)
+        pathfinding_btn_amount += 1
+
+        dijkstra_btn = Button(pos=(0, 45*pathfinding_btn_amount), size= (180, 45), label= "Dijkstra's", manager= self.manager, vis= 1, container= pathfinding_scroll_panel.element)
         pathfinding_btn_amount += 1
 
         pathfinding_scroll_cont.element.set_scrollable_area_dimensions((180, 45 * pathfinding_btn_amount))
@@ -105,13 +122,23 @@ class GuiManager:
 
 
         #Create sliders
-        size_slider_rect = pg.Rect((890,100), (250, 25))
+        size_slider_rect = pg.Rect((890,130), (250, 25))
         size_slider = pg_gui.elements.UIHorizontalSlider(size_slider_rect, 20, (10, 100), self.manager, click_increment= 2)
         size_slider.hide()
 
-        speed_slider_rect = pg.Rect((890,160), (250, 25))
+        speed_slider_rect = pg.Rect((890,200), (250, 25))
         speed_slider = pg_gui.elements.UIHorizontalSlider(speed_slider_rect, 50, (1, 100), self.manager, click_increment= 2)
         speed_slider.hide()
+
+        #Create Info text box
+        info_box_rect = pg.Rect((868,360),(334, 340))
+        info_box = pg_gui.elements.UITextBox("\n<font face='verdana' color='#ffffff' size=3.5><u><b>Complexity</b></u>\nBest Case (already sorted): <b>O(n)</b>\nAverage & Worst Case: <b>O(n²)</b>"
+        "\n\n<b><u>Definition</b></u>\nBubble Sort is a simple sorting algorithm that repeatedly compares adjacent elements and swaps them if they are in the wrong order. "
+        "This process continues until no more swaps are needed, meaning the list is fully sorted. "
+        "With each pass, the largest value 'bubbles up' to its correct position on the right. "
+        "The algorithm then repeats for the remaining unsorted elements until the entire list is ordered. "
+        "Due to its inefficient time complexity of <b>O(n²)</b>, Bubble Sort is primarily used for educational purposes rather than practical applications.</font>", info_box_rect, object_id="#info_text_box")
+        info_box.hide()
         
         #First no algorithm is selected, therefore no control-buttons show up
         selected_algo = None
@@ -134,7 +161,6 @@ class GuiManager:
 
         checkerboard = None
         
-        header_rect = pg.Rect((0,0), (self.screen_size[0], 50))
 
         #Application loop
         while self.running:
@@ -168,6 +194,7 @@ class GuiManager:
                             size_slider.enable()
                             speed_slider.show()
                             speed_slider.enable()
+                            info_box.show()
                         
                         #If there was a checkerboard drawn before set it to None
                         #so the Reset button won't trigger drawing a new one
@@ -200,6 +227,7 @@ class GuiManager:
                             size_slider.enable()
                             speed_slider.show()
                             speed_slider.enable()
+                            info_box.show()
 
                         if checkerboard:
                             checkerboard = None
@@ -228,6 +256,7 @@ class GuiManager:
                             size_slider.enable()
                             speed_slider.show()
                             speed_slider.enable()
+                            info_box.show()
                         
                         if checkerboard:
                             checkerboard = None
@@ -255,6 +284,7 @@ class GuiManager:
                             size_slider.enable()
                             speed_slider.show()
                             speed_slider.enable()
+                            info_box.show()
 
                         if checkerboard:
                             checkerboard = None
@@ -282,6 +312,7 @@ class GuiManager:
                             size_slider.enable()
                             speed_slider.show()
                             speed_slider.enable()
+                            info_box.show()
 
                         if checkerboard:
                             checkerboard = None
@@ -306,7 +337,6 @@ class GuiManager:
                             reset_btn.element.show()
                             pause_btn.element.show()
                             speed_slider.hide()
-                            size_slider.hide()
 
                         selected_algo = "Breadth-First-Search"
 
@@ -425,8 +455,13 @@ class GuiManager:
             
             #Blit animation surface
             self.screen.blit(self.anim_canvas.surface, self.anim_canvas_pos)
+    
             pg.draw.rect(self.screen, (20,20,20), header_rect) #make color a variable
-
+            
+            if selected_algo:
+                pg.draw.line(self.screen, self.teal_cl, (870,360), (1200,360), 5)
+                pg.draw.ellipse(self.screen, self.teal_cl, info_circle_rect)
+            
             self.update()
 
         pg.quit()
