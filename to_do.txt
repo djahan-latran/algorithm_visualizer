@@ -14,9 +14,10 @@ BUGS
   - [x] if you play an algorithm and you press pause and then switch to another algorithm 
     and press play again, the algorithm continues from previous state instead of starting all over
     with the new values
-  - while holding the slider button the values change very quickly and continuously -> set interval for gui update (like for animation update)
+  - [x] while holding the slider button the values change very quickly and continuously -> set interval for gui update (like for animation update)
   - bar graphs don't take up the whole surface screen at certain sizes in width
   - size slider position when selecting an algorithm and after resetting it
+  - maybe make a "basic search" category and then another "tree search" category for bfs and dfs 
 
 - Binary search
   - sometimes no green value at the end
@@ -24,6 +25,14 @@ BUGS
 
 - Pathfinding
   - speed is same as set speed in bar graph visualizations -> add speed slider
+  - [x] have user select the target  --> have to check boundaries when clicking the sel_target button
+  - need variable to let know that a target rectangle was selected (no multiple targets)
+  - need to properly find value 2
 
 - BFS
-  - not finding the 'value' -> check coordinate and value 
+  - [x] not finding the 'value' -> check coordinate and value 
+  - seems like the algorithm realizes that it found the target a bit to late -> check algorithm structure
+
+- Dfs
+  - [x] fix recursive yield
+  - doesn't stop when target is found
