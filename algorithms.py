@@ -173,7 +173,7 @@ class Bfs:
         self.board = board
         self.rect_info = {"current": None, "visited": None}
         self.start_pos = (0, 0)
-        self.end_pos = (board.rows, board.cols)
+        self.target = 2
 
     def run(self):
         queue = deque([self.start_pos])
@@ -190,12 +190,13 @@ class Bfs:
             x, y = queue.popleft()
             current = (x, y)
 
-            if (x, y) == self.end_pos:
+            if self.board.raster[x][y] == self.target:
+                print("FOUND")
                 return 
 
             self.rect_info["current"] = current
             self.rect_info["visited"] = visited
-            print(self.rect_info)
+            
             self.canvas.draw_board(self.board, self.rect_info)
             yield
 
@@ -213,26 +214,32 @@ class Dfs:
         self.canvas = canvas
         self.board = board
         self.visited = set()
-        self.end_pos = (board.rows, board.cols)
+        self.rect_info = {"current": None, "visited": None}
+        self.target = 2
         self.pos_x = 0
         self.pos_y = 0
         self.directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
     def run(self, pos_x, pos_y):
-        if  pos_x < 0 or pos_y < 0 or pos_x >= self.board.rows or pos_y >= self.board.cols or (pos_x, pos_y) in self.visited or self.board[pos_x][pos_y] == 1:
-            return False
         
-        self.visited.add((pos_x, pos_y))
+        if  pos_x < 0 or pos_y < 0 or pos_x >= self.board.rows or pos_y >= self.board.cols or (pos_x, pos_y) in self.visited or self.board.raster[pos_x][pos_y] == 1:
+            return
+        
+        self.rect_info["current"] = (pos_x, pos_y)
 
-        if (pos_x, pos_y) == self.end_pos:
-            print(f"VALUE FOUND at {pos_x}, {pos_y}")
+        self.canvas.draw_board(self.board, self.rect_info)
+        yield
+
+        self.visited.add((pos_x, pos_y))
+        self.rect_info["visited"] = self.visited
+
+        if self.board.raster[pos_x][pos_y] == self.target:
+            print("FOUND")
+            yield
             return True
 
         for dx, dy in self.directions:
-            if self.run(pos_x + dx, pos_y + dy):
-                return True
-        
-        return False
+            yield from self.run(pos_x + dx, pos_y + dy)
 
 
 class Astar:
