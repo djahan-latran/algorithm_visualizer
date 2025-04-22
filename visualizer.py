@@ -90,6 +90,8 @@ class AnimationCanvas:
                 if board.raster[i][j] == 1:
                     pg.draw.rect(self.surface, self.obstacle_rect_cl, sq_rect)
                     #changes.append(sq_rect)
+                elif board.raster[i][j] == 2:
+                    pg.draw.rect(self.surface, self.target_rect_cl, sq_rect)
                 elif end_pos and (i, j) == end_pos:
                     pg.draw.rect(self.surface, self.target_rect_cl, sq_rect)
                     #changes.append(sq_rect)
