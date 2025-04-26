@@ -234,12 +234,13 @@ class Dfs:
         self.rect_info["visited"] = self.visited
 
         if self.board.raster[pos_x][pos_y] == self.target:
-            print("FOUND")
             yield
             return True
 
         for dx, dy in self.directions:
-            yield from self.run(pos_x + dx, pos_y + dy)
+            result = yield from self.run(pos_x + dx, pos_y + dy)
+            if result == True:
+                return True
 
 
 class Astar:
