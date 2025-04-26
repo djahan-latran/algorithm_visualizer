@@ -1,3 +1,5 @@
+TASKS
+
 - Scrollable area of scroll container should adjust to total height of all buttons
 - Algorithm class that init's the basic parameter like self.nums, self.value_info etc and passes those to
   more specific algorithm classe e.g. BubbleSort, SelectionSort etc.
@@ -5,10 +7,12 @@
 - [x] binary search 
 - linear and binary search need value to be found displayed
 - [x] implement breadth-first-search
-- implement depth-first-search
+- [x] implement depth-first-search
 - finish the ui-template
+- rename file "inputs.py" 
+- maybe make a "basic search" category and then another "tree search" category for bfs and dfs 
 
-BUGS
+BUGS/FIXES
 
 - General
   - [x] if you play an algorithm and you press pause and then switch to another algorithm 
@@ -17,7 +21,7 @@ BUGS
   - [x] while holding the slider button the values change very quickly and continuously -> set interval for gui update (like for animation update)
   - bar graphs don't take up the whole surface screen at certain sizes in width
   - size slider position when selecting an algorithm and after resetting it
-  - maybe make a "basic search" category and then another "tree search" category for bfs and dfs 
+  
 
 - Binary search
   - sometimes no green value at the end
@@ -26,13 +30,14 @@ BUGS
 - Pathfinding
   - speed is same as set speed in bar graph visualizations -> add speed slider
   - [x] have user select the target  --> have to check boundaries when clicking the sel_target button
-  - need variable to let know that a target rectangle was selected (no multiple targets)
-  - need to properly find value 2
+  - [x] need variable to let know that a target rectangle was selected (no multiple targets)
+  - [x] need to properly find value 2
+  - [x] have a button to select obstacles
 
 - BFS
   - [x] not finding the 'value' -> check coordinate and value 
-  - seems like the algorithm realizes that it found the target a bit to late -> check algorithm structure
+  - seems like the algorithm realizes that it found the target a bit to late -> check algorithm structure (not necessarily the case)
 
 - Dfs
   - [x] fix recursive yield
-  - doesn't stop when target is found
+  - [x] doesn't stop when target is found (BIG PROBLEM)
