@@ -3,7 +3,6 @@ import pygame_gui as pg_gui
 from visualizer import AnimationCanvas
 from algorithms import BubbleSort, SelectionSort, InsertionSort, LinearSearch, BinarySearch, Bfs, Dfs
 from inputs import Parameters, Board
-import random
 import time
 
 class GuiManager:
@@ -19,10 +18,9 @@ class GuiManager:
         #Animation window position, size and color
         self.anim_canvas_pos = (185, 50)
         self.anim_canvas_size = (680, 400)
-        self.anim_canvas_cl = (100, 100, 100)
 
         #Theme colours
-        self.teal_cl = (51, 216, 245)
+        self.teal_cl = (58, 186, 249)
         self.white_cl = (255, 255, 255)
 
         #Input values for algorithms
@@ -53,7 +51,7 @@ class GuiManager:
         basic_sorts_scroll_panel = Panel(pos= (0, 0), size= (180, 1200), manager= self.manager, container= basic_sorts_scroll_cont.element) #Size of scrollable area
 
         #Create basic sorts category
-        basic_sorts = Button(pos= (0, 0), size= (180, 45), label= "Basic Sorting", manager= self.manager, vis= 1, container= basic_sorts_scroll_panel.element)
+        basic_sorts = Button(pos= (0, 0), size= (180, 45), label= "Basic Sorting", manager= self.manager, vis= 1, id= "#header_button",container= basic_sorts_scroll_panel.element)
         basic_sorts.element.disable()
 
         #Create algorithm buttons
@@ -75,7 +73,7 @@ class GuiManager:
         basic_search_scroll_cont = ScrollContainer(pos= (0, 230), size=(200, 200), manager= self.manager) 
         basic_search_scroll_panel = Panel(pos= (0, 0), size= (180, 1200), manager= self.manager, container= basic_search_scroll_cont.element)
 
-        basic_search = Button(pos=(0, 0), size=(180, 45), label= "Basic Search", manager= self.manager, vis= 1, container= basic_search_scroll_panel.element)
+        basic_search = Button(pos=(0, 0), size=(180, 45), label= "Basic Search", manager= self.manager, vis= 1, id= "#header_button", container= basic_search_scroll_panel.element)
         basic_search.element.disable()
 
         basic_search_btn_amount = 1
@@ -89,11 +87,11 @@ class GuiManager:
         basic_search_scroll_cont.element.set_scrollable_area_dimensions((180, 45 * basic_search_btn_amount))
 
 
-        #Create pathinfing scroll container and scroll panel inside
+        #Create pathfinding scroll container and scroll panel inside
         pathfinding_scroll_cont = ScrollContainer(pos= (0, 365), size=(200, 240), manager= self.manager) #Actual visible size of container
         pathfinding_scroll_panel = Panel(pos= (0, 0), size= (180, 1200), manager= self.manager, container= pathfinding_scroll_cont.element) #Size of scrollable area
 
-        pathfinding = Button(pos=(0, 0), size=(180, 45), label= "Pathfinding", manager= self.manager, vis= 1, container= pathfinding_scroll_panel.element)
+        pathfinding = Button(pos=(0, 0), size=(180, 45), label= "Pathfinding", manager= self.manager, vis= 1, id= "#header_button", container= pathfinding_scroll_panel.element)
         pathfinding.element.disable()
 
         pathfinding_btn_amount = 1
@@ -118,38 +116,63 @@ class GuiManager:
         #Create reset button
         reset_btn = Button(pos= (1000, 280), size= (65, 25), label= "Reset", manager= self.manager, vis= 0, id= "#control_button")
 
-        #Create reset button
+        #Create pause button
         pause_btn = Button(pos= (1090, 280), size= (65, 25), label= "Pause", manager= self.manager, vis= 0, id= "#control_button")
 
-        #Create reset button
-        set_target_btn = Button(pos= (1000, 120), size= (85, 25), label= "Set target", manager= self.manager, vis= 0, id= "#control_button")
+        #Create target button
+        set_target_btn = Button(pos= (910, 120), size= (85, 25), label= "Set target", manager= self.manager, vis= 0, id= "#control_button")
+        
+        #Create obstacle button
+        set_obstacle_btn = Button(pos= (1055, 120), size= (100, 25), label= "Set Obstacle", manager= self.manager, vis= 0, id= "#control_button")
 
         #Create sliders
-        size_slider_rect = pg.Rect((890,130), (250, 25))
+        size_slider_rect = pg.Rect((910,130), (245, 25))
         size_slider = pg_gui.elements.UIHorizontalSlider(size_slider_rect, 20, (10, 100), self.manager, click_increment= 2)
         size_slider.hide()
 
-        speed_slider_rect = pg.Rect((890,200), (250, 25))
+        speed_slider_rect = pg.Rect((910,200), (245, 25))
         speed_slider = pg_gui.elements.UIHorizontalSlider(speed_slider_rect, 50, (1, 100), self.manager, click_increment= 2)
         speed_slider.hide()
 
         #Create Info text box
-        info_box_rect = pg.Rect((868,360),(334, 340))
-        info_box = pg_gui.elements.UITextBox("\n<font face='verdana' color='#ffffff' size=3.5><u><b>Complexity</b></u>\nBest Case (already sorted): <b>O(n)</b>\nAverage & Worst Case: <b>O(n²)</b>"
-        "\n\n<b><u>Definition</b></u>\nBubble Sort is a simple sorting algorithm that repeatedly compares adjacent elements and swaps them if they are in the wrong order. "
+        bs_info_box_rect = pg.Rect((868,360),(334, 340))
+        bs_info_box = pg_gui.elements.UITextBox("\n<font face='verdana' color='#ffffff' size=3.5><u><b>Complexity</b></u>\nBest Case (already sorted): <b>O(n)</b>\nAverage & Worst Case: <b>O(n²)</b>"
+        "\n\n<u><b>Definition</b></u>\nBubble Sort is a simple sorting algorithm that repeatedly compares adjacent elements and swaps them if they are in the wrong order. "
         "This process continues until no more swaps are needed, meaning the list is fully sorted. "
         "With each pass, the largest value 'bubbles up' to its correct position on the right. "
         "The algorithm then repeats for the remaining unsorted elements until the entire list is ordered. "
-        "Due to its inefficient time complexity of <b>O(n²)</b>, Bubble Sort is primarily used for educational purposes rather than practical applications.</font>", info_box_rect, object_id="#info_text_box")
-        info_box.hide()
-        
+        "Due to its inefficient time complexity of <b>O(n²)</b>, Bubble Sort is primarily used for educational purposes rather than practical applications.</font>", bs_info_box_rect, object_id="#info_text_box")
+        bs_info_box.hide()
+
+        bs_code_box_rect = pg.Rect((self.anim_canvas_pos[0], self.anim_canvas_pos[1] + self.anim_canvas_size[1] + 5), (self.anim_canvas_size[0], 220))
+        bs_code_box = pg_gui.elements.UITextBox("Testing", bs_code_box_rect, object_id= "#info_text_box")
+        bs_code_box.hide()
+
         #Create fonts and texts
         title_font = pg.font.SysFont("Verdana", 27)
         headline_font = pg.font.SysFont("Verdana", 20)
+        slider_font = pg.font.SysFont("Verdana", 12)
+        info_icon_font = pg.font.SysFont("timesnewroman", 30, True)
 
         app_name = title_font.render("AlgoLab", True, self.white_cl) #title
         app_name_rect = app_name.get_rect()
         app_name_rect.bottomleft = (40, 40)
+        
+        settings_text = headline_font.render("Settings", True, self.white_cl)
+        settings_text_rect = settings_text.get_rect()
+        settings_text_rect.bottomleft = (880, 40)
+
+        size_slider_title = slider_font.render("Adjust Size", True, self.white_cl)
+        size_slider_title_rect = size_slider_title.get_rect()
+        size_slider_title_rect.bottomleft = (915, 125)
+
+        speed_slider_title = slider_font.render("Adjust Speed", True, self.white_cl)
+        speed_slider_title_rect = speed_slider_title.get_rect()
+        speed_slider_title_rect.bottomleft = (915, 195)
+
+        letter_i = info_icon_font.render("i", True, self.white_cl)
+        letter_i_rect = letter_i.get_rect()
+        letter_i_rect.center = (1035-1,360-1) #make variables then subtract 1
 
         #First no algorithm is selected, therefore no control-buttons show up
         selected_algo = None
@@ -166,7 +189,9 @@ class GuiManager:
         #Yet no algo started
         self.algo_running = False
         #Target for pathfinding not selected yet
-        sel_phase = False
+        target_sel_phase = False
+        #Obstacles for pathfinding not selected yet
+        obstacle_sel_phase = False
         #Initialize algorithm categorie
         curr_algo_cat = None
 
@@ -213,8 +238,10 @@ class GuiManager:
                                 size_slider.enable()
                                 speed_slider.show()
                                 speed_slider.enable()
-                                info_box.show()
-                            
+                                
+                                set_target_btn.element.hide()
+                                set_obstacle_btn.element.hide()
+
                             #If there was a checkerboard drawn before set it to None
                             #so the Reset button won't trigger drawing a new one
                             if checkerboard:
@@ -247,7 +274,9 @@ class GuiManager:
                                 size_slider.enable()
                                 speed_slider.show()
                                 speed_slider.enable()
-                                info_box.show()
+                                
+                                set_target_btn.element.hide()
+                                set_obstacle_btn.element.hide()
 
                             if checkerboard:
                                 checkerboard = None
@@ -269,6 +298,10 @@ class GuiManager:
                         elif event.ui_element == bubb_sort_btn.element:
                             self.algo_running = False
 
+                            bubb_sort_btn.element.select()
+                            sel_sort_btn.element.unselect()
+                            in_sort_btn.element.unselect()
+
                             if not play_btn.vis:
                                 play_btn.element.show()
                                 reset_btn.element.show()
@@ -277,7 +310,10 @@ class GuiManager:
                                 size_slider.enable()
                                 speed_slider.show()
                                 speed_slider.enable()
-                                info_box.show()
+                                bs_info_box.show()
+                                bs_code_box.show()
+                                set_target_btn.element.hide()
+                                set_obstacle_btn.element.hide()
                             
                             if checkerboard:
                                 checkerboard = None
@@ -298,6 +334,11 @@ class GuiManager:
                         #Handle Selection Sort button
                         elif event.ui_element == sel_sort_btn.element:
                             self.algo_running = False
+
+                            sel_sort_btn.element.select()
+                            bubb_sort_btn.element.unselect()
+                            in_sort_btn.element.unselect()
+
                             if not play_btn.vis:
                                 play_btn.element.show()
                                 reset_btn.element.show()
@@ -306,7 +347,9 @@ class GuiManager:
                                 size_slider.enable()
                                 speed_slider.show()
                                 speed_slider.enable()
-                                info_box.show()
+                                
+                                set_target_btn.element.hide()
+                                set_obstacle_btn.element.hide()
 
                             if checkerboard:
                                 checkerboard = None
@@ -327,6 +370,11 @@ class GuiManager:
                         #Handle Insertion Sort button
                         elif event.ui_element == in_sort_btn.element:
                             self.algo_running = False
+
+                            in_sort_btn.element.select()
+                            bubb_sort_btn.element.unselect()
+                            sel_sort_btn.element.unselect()
+
                             if not play_btn.vis:
                                 play_btn.element.show()
                                 reset_btn.element.show()
@@ -335,7 +383,9 @@ class GuiManager:
                                 size_slider.enable()
                                 speed_slider.show()
                                 speed_slider.enable()
-                                info_box.show()
+                                
+                                set_target_btn.element.hide()
+                                set_obstacle_btn.element.hide()
 
                             if checkerboard:
                                 checkerboard = None
@@ -355,6 +405,8 @@ class GuiManager:
 
                         #Handle Breadth-First-Search button
                         elif event.ui_element == bfs_btn.element:
+                            obstacle_selected = False
+                            target_selected = False
                             self.algo_running = False
                             size_slider.hide()
 
@@ -364,6 +416,7 @@ class GuiManager:
                                 pause_btn.element.show()
                                 speed_slider.show()
                                 set_target_btn.element.show()
+                                set_obstacle_btn.element.show()
 
                             selected_algo = "Breadth-First-Search"
                             curr_algo_cat = "Pathfinding"
@@ -372,8 +425,13 @@ class GuiManager:
 
                             self.anim_canvas.draw_board(checkerboard)
 
+                            bfs = Bfs(self.anim_canvas, checkerboard)
+                            self.algo_generator = bfs.run()
+
                         #Handle Depth-First-Search button
                         elif event.ui_element == dfs_btn.element:
+                            obstacle_selected = False
+                            target_selected = False
                             self.algo_running = False
                             size_slider.hide()
 
@@ -383,6 +441,7 @@ class GuiManager:
                                 pause_btn.element.show()
                                 speed_slider.show()
                                 set_target_btn.element.show()
+                                set_obstacle_btn.element.show()
 
                             selected_algo = "Depth-First-Search"
                             curr_algo_cat = "Pathfinding"
@@ -390,6 +449,9 @@ class GuiManager:
                             checkerboard = Board(self.anim_canvas_size, self.rect_amount)
 
                             self.anim_canvas.draw_board(checkerboard)
+
+                            dfs = Dfs(self.anim_canvas, checkerboard)
+                            self.algo_generator = dfs.run(0,0)
 
                         #Handle Play button
                         elif event.ui_element == play_btn.element:
@@ -447,6 +509,7 @@ class GuiManager:
                             self.algo_generator = None
                             
                             if checkerboard:
+                                target_selected = False
                                 checkerboard = Board(self.anim_canvas_size, self.rect_amount)
                                 self.anim_canvas.draw_board(checkerboard)
 
@@ -468,7 +531,19 @@ class GuiManager:
 
                         #Handle Set Target button
                         elif event.ui_element == set_target_btn.element:
-                            sel_phase = True
+                            if target_selected == False:
+                                target_sel_phase = True
+                            if obstacle_sel_phase:
+                                obstacle_sel_phase = False
+                        
+                        #Handle Set Obstacle button
+                        elif event.ui_element == set_obstacle_btn.element:
+                            if obstacle_sel_phase == True:
+                                obstacle_sel_phase = False
+                                obstacle_selected = True
+                            else:
+                                obstacle_sel_phase = True
+                        
 
                     #Handle sliders
                     if event.type == pg_gui.UI_HORIZONTAL_SLIDER_MOVED:
@@ -493,24 +568,27 @@ class GuiManager:
                         rect_no_x = canvas_x // checkerboard.rect_size
                         rect_no_y = canvas_y // checkerboard.rect_size
 
-                        if sel_phase:
+                        if target_sel_phase:
                             checkerboard.raster[rect_no_y][rect_no_x] = 2
                             self.anim_canvas.draw_board(checkerboard)
-                            sel_phase = False
-                            print("IT WENT HERE")
+                            target_selected = True
+                            target_sel_phase = False
 
-                        else:
+                        elif obstacle_sel_phase:
                             if checkerboard.raster[rect_no_y][rect_no_x] != 2:
                                 checkerboard.raster[rect_no_y][rect_no_x] = 1
                             self.anim_canvas.draw_board(checkerboard)
-                            print("BUT NOW IT WENT HERE")
+                        else:
+                            continue
 
 
             if self.algo_running and current_time - surface_updated >= surface_update_interval:
                 try:
                     next(self.algo_generator)
                     surface_updated = current_time
-                except StopIteration:
+                except StopIteration as e:
+                    if e.value == True:
+                        print("FOUND IT")
                     self.algo_running = False
                     speed_slider.set_current_value(1/20)
                     self.algo_generator = None
@@ -533,17 +611,17 @@ class GuiManager:
             if selected_algo:
                 pg.draw.line(self.screen, self.teal_cl, (870,360), (1200,360), 5)
                 pg.draw.ellipse(self.screen, self.teal_cl, info_circle_rect)
-                
+
                 cat_name = headline_font.render(f"Selected Algorithm:   {selected_algo}", True, self.white_cl)
                 cat_name_rect = cat_name.get_rect()
                 cat_name_rect.bottomleft = (200, 40)
                 
-                settings_text = headline_font.render("Settings", True, self.white_cl)
-                settings_text_rect = settings_text.get_rect()
-                settings_text_rect.bottomleft = (880, 40)
-                
+                self.screen.blit(letter_i, letter_i_rect)
                 self.screen.blit(cat_name, cat_name_rect)
                 self.screen.blit(settings_text, settings_text_rect)
+                self.screen.blit(speed_slider_title, speed_slider_title_rect)
+                if curr_algo_cat != "Pathfinding":
+                    self.screen.blit(size_slider_title, size_slider_title_rect)
             
             self.update()
 
@@ -557,14 +635,10 @@ class GuiManager:
 
 class Button:
     def __init__(self, pos, size, label, manager, vis, id=None, container=None):
-        self.pos = pos
-        self.size = size
-        self.label = label
         self.vis = vis
-        self.id = id
         self.element = pg_gui.elements.UIButton(
-            relative_rect= pg.Rect(self.pos, self.size),
-            text= f"{self.label}",
+            relative_rect= pg.Rect(pos, size),
+            text= f"{label}",
             manager= manager,
             visible= self.vis,
             object_id= id,
@@ -599,10 +673,6 @@ class Slider:
 class TextWindow:
     def __init__(self):
         pass
-
-# class MainFont:
-#     def __init__(self, size):
-#         main_font = pg.font.Font("Verdana", f"{size}")
 
 
 if __name__ == "__main__":
