@@ -1,5 +1,6 @@
 TASKS
 
+- REFACTOR !!!
 - Scrollable area of scroll container should adjust to total height of all buttons
 - Algorithm class that init's the basic parameter like self.nums, self.value_info etc and passes those to
   more specific algorithm classe e.g. BubbleSort, SelectionSort etc.
@@ -11,6 +12,7 @@ TASKS
 - finish the ui-template
 - rename file "inputs.py" 
 - maybe make a "basic search" category and then another "tree search" category for bfs and dfs 
+- make menu panel size parametric -> height adjusts to button amounts but buttons get created in a LOOP
 
 BUGS/FIXES
 
