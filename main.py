@@ -4,6 +4,8 @@ from visualizer import AnimationCanvas
 from algorithms import BubbleSort, SelectionSort, InsertionSort, LinearSearch, BinarySearch, Bfs, Dfs
 from inputs import Parameters, Board
 import time
+import json
+
 
 class AppManager:
     def __init__(self):
@@ -176,9 +178,7 @@ class AppManager:
                                 self.settings_panel.set_target_btn.element.hide()
                                 self.settings_panel.set_obstacle_btn.element.hide()
 
-                                self.bs_info_box.show()
-                                self.bs_code_box.show()
-                               
+                                self.info_panel.show_info()
                             
                             if self.checkerboard:
                                 self.checkerboard = None
@@ -475,14 +475,13 @@ class AppManager:
             self.screen.blit(self.header.app_name, self.header.app_name_rect)
 
             if self.states.selected_algo:
-                pg.draw.line(self.screen, self.colours["accent_cl"], (870,360), (1200,360), 5)
-                pg.draw.ellipse(self.screen, self.colours["accent_cl"], self.info_circle_rect)
-
                 self.cat_name = self.fonts.headline.render(f"Selected Algorithm:   {self.states.selected_algo}", True, self.colours["text_cl"])
                 self.cat_name_rect = self.cat_name.get_rect()
                 self.cat_name_rect.bottomleft = (200, 40)
-                
-                self.screen.blit(self.letter_i, self.letter_i_rect)
+                self.info_panel.show_info()
+                self.info_panel.render_header(self.screen)
+
+                self.screen.blit(self.info_panel.letter_i, self.info_panel.letter_i_rect)
                 self.screen.blit(self.cat_name, self.cat_name_rect)
                 self.header.render_settings()
                 self.screen.blit(self.header.settings_text, self.header.settings_text_rect)
@@ -514,31 +513,17 @@ class AppManager:
         #Settings panel instance
         self.settings_panel = GuiSettings(self.fonts, self.colours, self.manager)
         self.settings_panel.create_panel()
+    
+        #Create application states
+        self.states = States()
 
-        #Ui layout except buttons, animation surface and panels
-        info_circle_dim = 45
-        self.info_circle_rect = pg.Rect((1035 - info_circle_dim / 2, 360 - info_circle_dim / 2), (info_circle_dim, info_circle_dim))
-
-        #Create Info text box
-        self.bs_info_box_rect = pg.Rect((868,360),(334, 340))
-        self.bs_info_box = pg_gui.elements.UITextBox("\n<font face='verdana' color='#ffffff' size=3.5><u><b>Complexity</b></u>\nBest Case (already sorted): <b>O(n)</b>\nAverage & Worst Case: <b>O(n²)</b>"
-        "\n\n<u><b>Definition</b></u>\nBubble Sort is a simple sorting algorithm that repeatedly compares adjacent elements and swaps them if they are in the wrong order. "
-        "This process continues until no more swaps are needed, meaning the list is fully sorted. "
-        "With each pass, the largest value 'bubbles up' to its correct position on the right. "
-        "The algorithm then repeats for the remaining unsorted elements until the entire list is ordered. "
-        "Due to its inefficient time complexity of <b>O(n²)</b>, Bubble Sort is primarily used for educational purposes rather than practical applications.</font>", self.bs_info_box_rect, object_id="#info_text_box")
-        self.bs_info_box.hide()
+        #Info panel instance
+        self.info_panel = GuiInfoPanel(self.fonts, self.colours, self.states.selected_algo)
+        self.info_panel.hide_info()
 
         self.bs_code_box_rect = pg.Rect((self.anim_canvas_pos[0], self.anim_canvas_pos[1] + self.anim_canvas_size[1] + 5), (self.anim_canvas_size[0], 220))
         self.bs_code_box = pg_gui.elements.UITextBox("Testing", self.bs_code_box_rect, object_id= "#info_text_box")
         self.bs_code_box.hide()
-
-        self.letter_i = self.fonts.info_icon.render("i", True, self.colours["text_cl"])
-        self.letter_i_rect = self.letter_i.get_rect()
-        self.letter_i_rect.center = (1035-1,360-1) #make variables then subtract 1
-
-        #Create application states
-        self.states = States()
 
         #Create surface attribute of the animation canvas
         self.anim_canvas.create_surface(self.anim_canvas_size)
@@ -626,19 +611,57 @@ class States:
         self.obstacle_selected = False
 
 
-class TextWindow:
-    def __init__(self):
-        pass
-
-
 class GuiAnimationWindow:
     def __init__(self):
         pass
 
 
-class GuiInfoPanel:
+class FileReader:
     def __init__(self):
-        pass
+        with open("info_texts.json", "r") as file:
+            self.info_texts = json.load(file)
+
+    def get_text(self, algorithm):
+        return self.info_texts[f"{algorithm}"]["definition"]
+    
+
+class TextWindow:
+    def __init__(self, pos, size, text):
+        self.pos = pos
+        self.size = size
+        box_rect = pg.Rect(self.pos, self.size)
+        self.text = text
+        self.element = pg_gui.elements.UITextBox(self.text, box_rect, object_id="#info_text_box")
+
+
+class GuiInfoPanel:
+    def __init__(self, fonts, colours, file_reader):
+        self.fonts = fonts
+        self.colours = colours 
+        #Info icon parameters
+        self.info_circle_dim = 45
+        self.anchor_x = 1035
+        self.anchor_y = 360
+        #Info box parameters
+        self.box_pos = (868, 360)
+        self.box_size = (334, 340)
+        self.file_reader = file_reader
+
+        text = self.file_reader.get_text()
+        self.info_window = TextWindow(self.box_pos, self.box_size, self.text)
+    
+    def render_header(self, screen):
+        #Create info icon
+        self.info_circle_rect = pg.Rect((self.anchor_x - self.info_circle_dim / 2, self.anchor_y - self.info_circle_dim / 2), 
+                                        (self.info_circle_dim, self.info_circle_dim)
+                                        )
+    
+        self.letter_i = self.fonts.info_icon.render("i", True, self.colours["text_cl"])
+        self.letter_i_rect = self.letter_i.get_rect()
+        self.letter_i_rect.center = (1035-1,360-1) #make variables then subtract 1
+        
+        pg.draw.line(screen, self.colours["accent_cl"], (870,360), (1200,360), 5)
+        pg.draw.ellipse(screen, self.colours["accent_cl"], self.info_circle_rect)
 
 
 class GuiSettings:
