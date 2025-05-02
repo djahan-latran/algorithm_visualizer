@@ -186,12 +186,10 @@ class Bfs:
                     visited.add((i, j))
 
         while queue:
-            #pg.event.pump()
             x, y = queue.popleft()
             current = (x, y)
 
             if self.board.raster[x][y] == self.target:
-                print("FOUND")
                 return 
 
             self.rect_info["current"] = current
