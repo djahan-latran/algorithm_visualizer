@@ -1,8 +1,11 @@
 TASKS
 
 - REFACTOR !!!
-- Scrollable area of scroll container should adjust to total height of all buttons
-- Algorithm class that init's the basic parameter like self.nums, self.value_info etc and passes those to
+- use file to import text for info panel. make it vary depending on selected algo
+- create class to render text
+- create class to blit to surface
+- scrollable area of scroll container should adjust to total height of all buttons
+- algorithm class that init's the basic parameter like self.nums, self.value_info etc and passes those to
   more specific algorithm classe e.g. BubbleSort, SelectionSort etc.
 - [x] size slider 
 - [x] binary search 
@@ -43,3 +46,6 @@ BUGS/FIXES
 - Dfs
   - [x] fix recursive yield
   - [x] doesn't stop when target is found (BIG PROBLEM)
+
+- InfoPanel
+  - text window not showing all the text
