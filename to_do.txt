@@ -1,7 +1,7 @@
 TASKS
 
 - REFACTOR !!!
-- use file to import text for info panel. make it vary depending on selected algo
+- [x] use file to import text for info panel. make it vary depending on selected algo
 - create class to render text
 - create class to blit to surface
 - scrollable area of scroll container should adjust to total height of all buttons
@@ -26,7 +26,7 @@ BUGS/FIXES
   - [x] while holding the slider button the values change very quickly and continuously -> set interval for gui update (like for animation update)
   - bar graphs don't take up the whole surface screen at certain sizes in width
   - size slider position when selecting an algorithm and after resetting it
-  
+  - fix FileReader flow -> should reload text for current algorithm
 
 - Binary search
   - sometimes no green value at the end

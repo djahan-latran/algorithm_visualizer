@@ -2,9 +2,16 @@
 import pygame as pg
 
 
-class AnimationCanvas:
+class AnimationPanel:
 
-    def __init__(self):
+    def __init__(self, screen):
+        #Main surface
+        self.screen = screen
+
+        #Animation window position, size and color
+        self.pos = (185, 50)
+        self.size = (680, 400)
+        
         #Background color
         self.background_cl = (82, 82, 82)
 
@@ -33,10 +40,8 @@ class AnimationCanvas:
         #Bevel on corners of the bars
         self.bar_bevel = 2
 
-    def create_surface(self, surface_size):
-        self.surface_size = surface_size
-        self.surface = pg.Surface(self.surface_size)
-        self.side_pad = int(self.surface_size[0] / 32)
+        self.surface = pg.Surface(self.size)
+        self.side_pad = int(self.size[0] / 32)
 
     def draw_bar_graphs(self, values, draw_info=None):
         #fill the surface with bg color
@@ -46,7 +51,7 @@ class AnimationCanvas:
 
         #calc the spacing between bar graphs and their size
         spaces = (len(values) * 2) - 1
-        bar_width = int((self.surface_size[0] - (self.side_pad * 2)) / spaces) 
+        bar_width = int((self.size[0] - (self.side_pad * 2)) / spaces) 
 
         #set font size relative to bar_width
         main_font = pg.font.SysFont("Arial", bar_width - self.label_pad, bold=True)
@@ -55,15 +60,19 @@ class AnimationCanvas:
         for i, value in enumerate(values):
             bar_height = value * 3
             x_coord = i * bar_width * 2 + self.side_pad
-            y_coord = self.surface_size[1] - bar_height
+            y_coord = self.size[1] - bar_height
+
             bar_rect = pg.Rect(x_coord, y_coord, bar_width, bar_height)
 
             if draw_info and value in draw_info["positive"]:
                 pg.draw.rect(self.surface, self.sortd_bar_cl, bar_rect, border_radius= self.bar_bevel)
+
             elif draw_info and value in draw_info["negative"]:
                 pg.draw.rect(self.surface, self.red_bar_cl, bar_rect, border_radius= self.bar_bevel)
+
             elif draw_info and value in draw_info["neutral"]:
                 pg.draw.rect(self.surface, self.curr_bar_cl, bar_rect, border_radius= self.bar_bevel)
+
             else:
                 pg.draw.rect(self.surface, self.def_bar_cl, bar_rect, border_radius= self.bar_bevel)
             
@@ -79,33 +88,33 @@ class AnimationCanvas:
         x_coord = 0
         y_coord = 0
 
-        #Collect the changes
-        #changes = []
         end_pos = (len(board.raster), len(board.raster[1]))
 
 
         for i in range(board.rows):
             for j in range(board.cols):
                 sq_rect = pg.Rect(x_coord, y_coord, board.rect_size, board.rect_size)
+
                 if board.raster[i][j] == 1:
                     pg.draw.rect(self.surface, self.obstacle_rect_cl, sq_rect)
-                    #changes.append(sq_rect)
+                    
                 elif board.raster[i][j] == 2:
                     pg.draw.rect(self.surface, self.target_rect_cl, sq_rect)
+
                 elif end_pos and (i, j) == end_pos:
                     pg.draw.rect(self.surface, self.target_rect_cl, sq_rect)
-                    #changes.append(sq_rect)
+                    
                 elif value_info and value_info["current"] and (i, j) == value_info["current"]:
                     pg.draw.rect(self.surface, self.blue_rect_cl, sq_rect, 3)
-                    #changes.append(sq_rect)
+                    
                 elif value_info and value_info["visited"] and (i, j) in value_info["visited"]:
                     pg.draw.rect(self.surface, self.curr_rect_cl, sq_rect)
                     pg.draw.rect(self.surface, self.def_rect_bord_cl, sq_rect, 1)
-                    #changes.append(sq_rect)
+                    
                 else:
                     pg.draw.rect(self.surface, self.def_rect_cl, sq_rect)
                     pg.draw.rect(self.surface, self.def_rect_bord_cl, sq_rect, 1)
-                    #changes.append(sq_rect)
+                    
 
                 x_coord += board.rect_size
 

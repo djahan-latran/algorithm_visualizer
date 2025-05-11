@@ -1,13 +1,19 @@
 """A modul containen different search, sort and pathfinding algorithm classes for the AnimationCanvas"""
-import random
-from visualizer import AnimationCanvas
 from collections import deque
 
 
-class LinearSearch:
-    def __init__(self, nums, canvas, value):
-        self.nums = nums
+class AlgorithmModel:
+    def __init__(self, canvas):
         self.canvas = canvas
+    
+    def run(self):
+        pass
+
+
+class LinearSearch:
+    def __init__(self, nums, value):
+        self.nums = nums
+        #self.canvas = canvas
         self.value = value
         self.value_info = {"positive": [], "neutral": [], "negative": []}
 
@@ -15,12 +21,12 @@ class LinearSearch:
         for i in range(len(self.nums)):
             if self.nums[i] == self.value:
                 self.value_info["positive"] = [self.nums[i]]
-                self.canvas.draw_bar_graphs(self.nums, self.value_info)
+                #self.canvas.draw_bar_graphs(self.nums, self.value_info)
                 yield
                 break
             else:
                 self.value_info["neutral"] = [self.nums[i]]
-                self.canvas.draw_bar_graphs(self.nums, self.value_info)
+                #self.canvas.draw_bar_graphs(self.nums, self.value_info)
                 yield
                 self.value_info["negative"].append(self.nums[i])
                 self.value_info["neutral"] = []
