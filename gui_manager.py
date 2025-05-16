@@ -2,7 +2,7 @@
 import pygame as pg
 import pygame_gui as pg_gui
 from gui_panels import MainPanel, MenuPanel, AnimationPanel, CodePanel, SettingsPanel, InfoPanel
-from styles import AppColors, AppFonts
+from styles import AppColours, AppFonts
 from file_reader import FileReader
 from app_states import AppStates
 
@@ -15,13 +15,13 @@ class GuiManager: #let the manager go through events and delegate them to panels
         
         #Fonts and colors instance
         self.fonts = AppFonts()
-        self.colours = AppColors()
+        self.colours = AppColours()
         
         self.file_reader = FileReader()
     
     def create_gui(self):
         #Create panels
-        self.main_panel = MainPanel(self.fonts, self.colours)
+        self.main_panel = MainPanel(self.fonts, self.colours, self.controller)
         self.menu_panel = MenuPanel(self.pg_manager, self.controller)
         self.menu_panel.create_menu()
         self.animation_panel = AnimationPanel(self.main_panel.screen,
