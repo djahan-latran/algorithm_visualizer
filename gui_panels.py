@@ -6,12 +6,15 @@ from gui_elements import Button, ScrollContainer, Slider, Panel, TextWindow
 
 class MainPanel:
 
-    def __init__(self, fonts, colours):
+    def __init__(self, fonts, colours, controller):
         #Main window
         self.screen_size = (1200, 700)
         self.screen = pg.display.set_mode(self.screen_size)
         pg.display.set_caption("AlgoLab")
         
+        #Controller
+        self.controller = controller
+
         #Style attributes
         self.fonts = fonts
         self.colours = colours
@@ -19,39 +22,59 @@ class MainPanel:
 
         #Locations
         self.settings_loc = (880, 40)
-        self.name_loc = (40, 40)
+        self.app_name_loc = (40, 40)
+        self.algo_name_loc = (200, 40)
 
     def render_app_name(self):
         #Render application name
         self.app_name = self.fonts.title.render("AlgoLab", True, self.colours.values["text_cl"]) #title
         self.app_name_rect = self.app_name.get_rect()
-        self.app_name_rect.bottomleft = self.name_loc
-       
+        self.app_name_rect.bottomleft = self.app_name_loc
+
+    def render_selected_algo_name(self):
+        self.sel_algo_name = self.fonts.headline.render(f"Selected Algorithm: {self.controller.states.selected_algo}",
+                                                        True,
+                                                        self.colours.values["text_cl"]
+                                                        )
+        self.sel_algo_name_rect = self.sel_algo_name.get_rect()
+        self.sel_algo_name_rect.bottomleft = self.algo_name_loc
+
     def render_settings(self):
         #Render settings
         self.settings_text = self.fonts.headline.render("Settings", True, self.colours.values["text_cl"])
         self.settings_text_rect = self.settings_text.get_rect()
         self.settings_text_rect.bottomleft = self.settings_loc
    
-    def _render_dark_bar(self):
+    def render_dark_bar(self):
         pg.draw.rect(self.screen, self.colours.values["header_cl"], self.header_rect)
 
-    def _blit_name(self):
+    def blit_selected_algo_name(self):
+        self.screen.blit(self.sel_algo_name, self.sel_algo_name_rect)
+
+    def blit_name(self):
         self.screen.blit(self.app_name, self.app_name_rect)
 
-    def _blit_settings(self):
+    def blit_settings(self):
         self.screen.blit(self.settings_text, self.settings_text_rect)
 
     def render_init_screen(self):
         self.render_app_name()
-        self._render_dark_bar()
-        self._blit_name()
+        self.render_dark_bar()
+        self.blit_name()
 
     def render_active_screen(self):
-        self._render_dark_bar()
+        self.render_dark_bar()
+        self.render_selected_algo_name()
         self.render_settings()
-        self._blit_name()
-        self._blit_settings()
+        self.blit_selected_algo_name()
+        self.blit_name()
+        self.blit_settings()
+    
+    def update(self):
+        if self.controller.states.selected_algo:
+            self.render_active_screen()
+        else:
+            self.render_init_screen()
 
 
 class MenuPanel:
@@ -280,6 +303,7 @@ class MenuPanel:
         else:
             pass  #another algorithm can be added here
 
+
 class AnimationPanel:
 
     def __init__(self, screen, controller):
@@ -324,7 +348,7 @@ class AnimationPanel:
         self.surface = pg.Surface(self.size)
         self.side_pad = int(self.size[0] / 32)
 
-    def draw_bar_graphs(self, values, draw_info=None):
+    def draw_bar_graphs(self, values):
         #fill the surface with bg color
         self.surface.fill(self.background_cl)
 
@@ -345,13 +369,13 @@ class AnimationPanel:
 
             bar_rect = pg.Rect(x_coord, y_coord, bar_width, bar_height)
 
-            if draw_info and value in draw_info["positive"]:
+            if self.controller.states.draw_bg_info and value in self.controller.states.draw_bg_info["positive"]:
                 pg.draw.rect(self.surface, self.sortd_bar_cl, bar_rect, border_radius= self.bar_bevel)
 
-            elif draw_info and value in draw_info["negative"]:
+            elif self.controller.states.draw_bg_info and value in self.controller.states.draw_bg_info["negative"]:
                 pg.draw.rect(self.surface, self.red_bar_cl, bar_rect, border_radius= self.bar_bevel)
 
-            elif draw_info and value in draw_info["neutral"]:
+            elif self.controller.states.draw_bg_info and value in self.controller.states.draw_bg_info["neutral"]:
                 pg.draw.rect(self.surface, self.curr_bar_cl, bar_rect, border_radius= self.bar_bevel)
 
             else:
@@ -363,14 +387,13 @@ class AnimationPanel:
             value_rect.midbottom = (x_coord + bar_width/2, y_coord)
             self.surface.blit(value_label, value_rect)
     
-    def draw_board(self, board, value_info= None):
+    def draw_board(self, board):
         #Draw the checkerboard
         
         x_coord = 0
         y_coord = 0
 
         end_pos = (len(board.raster), len(board.raster[1]))
-
 
         for i in range(board.rows):
             for j in range(board.cols):
@@ -382,13 +405,13 @@ class AnimationPanel:
                 elif board.raster[i][j] == 2:
                     pg.draw.rect(self.surface, self.target_rect_cl, sq_rect)
 
-                elif end_pos and (i, j) == end_pos:
+                elif end_pos and (i, j) == end_pos:  #check if this is still necessary
                     pg.draw.rect(self.surface, self.target_rect_cl, sq_rect)
                     
-                elif value_info and value_info["current"] and (i, j) == value_info["current"]:
+                elif self.controller.states.draw_pf_info["current"] and (i, j) == self.controller.states.draw_pf_info["current"]:
                     pg.draw.rect(self.surface, self.blue_rect_cl, sq_rect, 3)
                     
-                elif value_info and value_info["visited"] and (i, j) in value_info["visited"]:
+                elif self.controller.states.draw_pf_info["visited"] and (i, j) in self.controller.states.draw_pf_info["visited"]:
                     pg.draw.rect(self.surface, self.curr_rect_cl, sq_rect)
                     pg.draw.rect(self.surface, self.def_rect_bord_cl, sq_rect, 1)
                     
@@ -403,10 +426,45 @@ class AnimationPanel:
             x_coord = 0 
 
     def update(self):
-        if self.controller.states.selected_algo:
-            self.draw_bar_graphs(self.controller.values,)
-            self.screen.blit(self.surface, self.pos)
+        if self.controller.states.selected_algo and not self.controller.states.algo_running:
+            
+            if not self.controller.states.anim_surf_size:
+                self.controller.states.anim_surf_size = self.size
 
+            if self.controller.states.curr_algo_cat == "Pathfinding":
+                self.draw_board(self.controller.board)
+            else:
+                self.draw_bar_graphs(self.controller.states.values)
+                
+
+        if self.controller.states.next_animation_frame:
+            
+            if self.controller.states.curr_algo_cat == "Pathfinding":
+                self.draw_board(self.controller.board) 
+            else:
+                self.draw_bar_graphs(self.controller.states.values)
+            
+            self.controller.next_algorithm_step()
+            self.controller.states.next_animation_frame = False
+
+        if  self.controller.states.target_sel_phase and not self.controller.states.algo_running and not self.controller.states.target_selected:
+            mouse_pos = pg.mouse.get_pos()
+            mouse_x, mouse_y = mouse_pos[0], mouse_pos[1]
+
+            if pg.mouse.get_pressed()[0] and self.pos[0] < mouse_x < self.pos[0] + self.size[0] and self.pos[1] < mouse_y < self.pos[1] + self.size[1]:
+                surface_x, surface_y = mouse_x - self.pos[0], mouse_y - self.pos[1]
+                self.controller.set_target_on_board(surface_x, surface_y)
+
+        if self.controller.states.obstacle_sel_phase and not self.controller.states.algo_running:
+            mouse_pos = pg.mouse.get_pos()
+            mouse_x, mouse_y = mouse_pos[0], mouse_pos[1]
+
+            if pg.mouse.get_pressed()[0] and self.pos[0] < mouse_x < self.pos[0] + self.size[0] and self.pos[1] < mouse_y < self.pos[1] + self.size[1]:
+                surface_x, surface_y = mouse_x - self.pos[0], mouse_y - self.pos[1]
+                self.controller.set_obstacle_on_board(surface_x, surface_y)
+
+    def blit_surface(self):
+        self.screen.blit(self.surface, self.pos)
 
 class CodePanel:
 
@@ -513,6 +571,8 @@ class SettingsPanel:
         self.size_slider.element.enable()
         self.speed_slider.element.show()
         self.speed_slider.element.enable()
+        self.set_target_btn.element.hide()
+        self.set_obstacle_btn.element.hide()
     
     def hide_bg_control_btns(self):
         pass
@@ -525,25 +585,54 @@ class SettingsPanel:
         self.size_slider.element.disable()
         self.speed_slider.element.show()
         self.speed_slider.element.enable()
+        self.set_target_btn.element.show()
+        self.set_obstacle_btn.element.show()
     
     def hide_pf_control_btns(self):
         pass
     
-    def handle_events(self, event):
+    def event_handle_btns(self, event):
         if event.ui_element == self.play_btn.element:
             self.controller.play_btn_pressed()
 
-    def update(self):
-        #update buttons and texts
-        if self.controller.states.curr_algo_cat != None:
-            if self.controller.states.curr_algo_cat == "Pathfinding":
-                self.blit_speed_slider_title()
-                self.show_pf_control_btns()
-            else:
-                self.show_bg_control_btns()
-                self.blit_speed_slider_title()
-                self.blit_size_slider_title()
+        elif event.ui_element == self.reset_btn.element:
+            self.controller.reset_btn_pressed()
 
+        elif event.ui_element == self.pause_btn.element:
+            self.controller.pause_btn_pressed()
+        
+        elif event.ui_element == self.set_target_btn.element:
+            self.controller.set_target_btn_pressed()
+        
+        elif event.ui_element == self.set_obstacle_btn.element:
+            self.controller.set_obstacle_btn_pressed()
+
+    def event_handle_sliders(self, event):
+        if event.ui_element == self.size_slider.element:
+            curr_slider_value = self.size_slider.element.get_current_value()
+            self.controller.size_slider_moved(curr_slider_value)
+        
+        elif event.ui_element == self.speed_slider.element:
+            curr_slider_value = self.speed_slider.element.get_current_value()
+            self.controller.speed_slider_moved(curr_slider_value)
+
+    def update(self):
+        if self.controller.states.curr_algo_cat == "Pathfinding":
+            self.show_pf_control_btns()
+        else:
+            self.show_bg_control_btns()
+        
+        if self.controller.states.parameter_reset:
+            print("It goes here")
+            self.size_slider.element.set_current_value(20)
+            self.controller.set_parameter_reset_false()
+    
+    def blit_slider_titles(self):
+        if self.controller.states.curr_algo_cat == "Pathfinding":
+            self.blit_speed_slider_title()
+        else:
+            self.blit_speed_slider_title()
+            self.blit_size_slider_title()
 
 
 class InfoPanel:
