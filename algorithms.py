@@ -3,41 +3,41 @@ from collections import deque
 
 
 class AlgorithmModel:
-    def __init__(self, canvas):
-        self.canvas = canvas
+    def __init__(self):
+        pass
     
     def run(self):
         pass
 
 
 class LinearSearch:
-    def __init__(self, nums, value):
+    def __init__(self, nums, value, value_info):
         self.nums = nums
-        #self.canvas = canvas
         self.value = value
-        self.value_info = {"positive": [], "neutral": [], "negative": []}
+        self.value_info = value_info
 
     def run(self):
         for i in range(len(self.nums)):
             if self.nums[i] == self.value:
                 self.value_info["positive"] = [self.nums[i]]
-                #self.canvas.draw_bar_graphs(self.nums, self.value_info)
+                
                 yield
+
                 break
             else:
                 self.value_info["neutral"] = [self.nums[i]]
-                #self.canvas.draw_bar_graphs(self.nums, self.value_info)
+
                 yield
+
                 self.value_info["negative"].append(self.nums[i])
                 self.value_info["neutral"] = []
 
 
 class BinarySearch:
-    def __init__(self, nums, canvas, value):
+    def __init__(self, nums, value, value_info):
         self.original_nums = nums
-        self.canvas = canvas
         self.value = value
-        self.value_info = {"positive": [], "neutral": [], "negative": []}
+        self.value_info = value_info
 
     def run(self, nums):
 
@@ -45,7 +45,7 @@ class BinarySearch:
         mid = len(nums)//2
 
         self.value_info["neutral"] = [nums[mid]]
-        self.canvas.draw_bar_graphs(self.original_nums, self.value_info)
+
         yield
 
         if nums[mid] == self.value:
@@ -53,7 +53,7 @@ class BinarySearch:
             for i in range(len(nums)):
                 if nums[i] != self.value:
                     self.value_info["negative"].append(nums[i])
-            self.canvas.draw_bar_graphs(self.original_nums, self.value_info)
+
             yield
 
         elif nums[mid] < self.value:
@@ -61,26 +61,27 @@ class BinarySearch:
                 self.value_info["negative"].append(nums[i])
             self.value_info["negative"].append(nums[mid])
 
-            self.canvas.draw_bar_graphs(self.original_nums, self.value_info)
             yield
+
             right = nums[mid:]
+
             yield from self.run(right)
+
         else:
             for i in range(mid, len(nums)):
                 self.value_info["negative"].append(nums[i])
             
-            self.canvas.draw_bar_graphs(self.original_nums, self.value_info)
             yield
 
             left = nums[:mid]
+
             yield from self.run(left)
 
 
 class BubbleSort:
-    def __init__(self, nums, canvas):
+    def __init__(self, nums, value_info):
         self.nums = nums
-        self.canvas = canvas
-        self.value_info = {"positive": [], "neutral": [], "negative": []}
+        self.value_info = value_info
 
     def run(self):
         #bubble sort application
@@ -96,7 +97,6 @@ class BubbleSort:
                     #indices of graphs that are currently 'bubbled'
                     self.value_info["neutral"] = [self.nums[j], self.nums[j+1]]
 
-                    self.canvas.draw_bar_graphs(self.nums, self.value_info)
                     #yield info to visualizer
                     yield
 
@@ -108,15 +108,13 @@ class BubbleSort:
                 self.value_info["positive"].append(self.nums[j])
             
             #yield info to visualizer
-            self.canvas.draw_bar_graphs(self.nums, self.value_info)
             yield
 
 
 class SelectionSort:
-    def __init__(self, nums, canvas):
+    def __init__(self, nums, value_info):
         self.nums = nums
-        self.canvas = canvas
-        self.value_info = {"positive": [], "neutral": [], "negative": []}
+        self.value_info = value_info
 
     def run(self):
          for i in range(len(self.nums)):
@@ -126,19 +124,18 @@ class SelectionSort:
                     self.nums[j] = self.nums[i]
                     self.nums[i] = tmp
                 self.value_info["neutral"] = [self.nums[i], self.nums[j]]
-                self.canvas.draw_bar_graphs(self.nums, self.value_info)
+                
                 yield
             
             self.value_info["positive"].append(self.nums[i])
-            self.canvas.draw_bar_graphs(self.nums, self.value_info)
+
             yield
 
 
 class InsertionSort:
-    def __init__(self, nums, canvas):
+    def __init__(self, nums, value_info):
         self.nums = nums
-        self.canvas = canvas
-        self.value_info = {"positive": [], "neutral": [], "negative": []}
+        self.value_info = value_info
     
     def run(self):
         for i in range(1, len(self.nums)):
@@ -153,13 +150,13 @@ class InsertionSort:
                 else:
                     self.value_info["neutral"] = [self.nums[j]]
 
-                self.canvas.draw_bar_graphs(self.nums, self.value_info)
                 yield
+
                 j -= 1
 
         sorted_values = [value for value in self.nums]
         self.value_info["positive"] = sorted_values
-        self.canvas.draw_bar_graphs(self.nums, self.value_info)
+
         yield
 
 
@@ -174,75 +171,71 @@ class QuickSort:
 
 
 class Bfs:
-    def __init__(self, canvas, board):
-        self.canvas = canvas
-        self.board = board
-        self.rect_info = {"current": None, "visited": None}
+    def __init__(self, value_info):
         self.start_pos = (0, 0)
         self.target = 2
+        self.value_info = value_info
 
-    def run(self):
+    def run(self, board):
         queue = deque([self.start_pos])
         visited = set([self.start_pos])
         directions = [(1, 0), (-1, 0), (0, -1), (0, 1)] #right, left, up, down
 
-        for i in range(self.board.rows):
-            for j in range(self.board.cols):
-                if self.board.raster[i][j] == 1:
+        for i in range(board.rows):
+            for j in range(board.cols):
+                if board.raster[i][j] == 1:
                     visited.add((i, j))
 
         while queue:
             x, y = queue.popleft()
             current = (x, y)
 
-            if self.board.raster[x][y] == self.target:
+            if board.raster[x][y] == self.target:
                 return 
 
-            self.rect_info["current"] = current
-            self.rect_info["visited"] = visited
+            self.value_info["current"] = current
+            self.value_info["visited"] = visited
             
-            self.canvas.draw_board(self.board, self.rect_info)
             yield
 
             for dx, dy in directions:
                 new_x, new_y = x + dx, y + dy
                 
-                if 0 <= new_x < self.board.rows and 0 <= new_y < self.board.cols and (new_x, new_y) not in visited:
+                if 0 <= new_x < board.rows and 0 <= new_y < board.cols and (new_x, new_y) not in visited:
                     queue.append((new_x, new_y))
                     visited.add((new_x, new_y))
 
         return print("Error: No end-pos found")
 
 class Dfs:
-    def __init__(self, canvas, board):
-        self.canvas = canvas
-        self.board = board
+    def __init__(self, value_info):
+        self.value_info = value_info
         self.visited = set()
-        self.rect_info = {"current": None, "visited": None}
         self.target = 2
-        self.pos_x = 0
-        self.pos_y = 0
         self.directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
-    def run(self, pos_x, pos_y):
+    def run(self, pos_x, pos_y, board):
         
-        if  pos_x < 0 or pos_y < 0 or pos_x >= self.board.rows or pos_y >= self.board.cols or (pos_x, pos_y) in self.visited or self.board.raster[pos_x][pos_y] == 1:
+        if  pos_x < 0 or pos_y < 0 or pos_x >= board.rows or pos_y >= board.cols or (pos_x, pos_y) in self.visited or board.raster[pos_x][pos_y] == 1:
             return
         
-        self.rect_info["current"] = (pos_x, pos_y)
+        self.value_info["current"] = (pos_x, pos_y)
 
-        self.canvas.draw_board(self.board, self.rect_info)
         yield
 
         self.visited.add((pos_x, pos_y))
-        self.rect_info["visited"] = self.visited
+        self.value_info["visited"] = self.visited
 
-        if self.board.raster[pos_x][pos_y] == self.target:
+        if board.raster[pos_x][pos_y] == self.target:
+            
             yield
+
             return True
 
         for dx, dy in self.directions:
-            result = yield from self.run(pos_x + dx, pos_y + dy)
+
+            result = yield from self.run(pos_x + dx, pos_y + dy, board)
+
             if result == True:
                 return True
 
