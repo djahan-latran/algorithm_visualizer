@@ -2,13 +2,15 @@
 import pygame as pg
 
 
-class AppColors:
+class AppColours:
 
     def __init__(self):
         #Colors dictionary
         self.values = {"accent_cl":(58, 186, 249), 
                         "text_cl":(255, 255, 255),
-                        "header_cl": (20, 20, 20)}        
+                        "header_cl": (20, 20, 20),
+                        "main_bg_cl": (50, 50, 50)
+                        }        
 
 
 class AppFonts:
