@@ -13,10 +13,9 @@ class Parameters:
         return self.values
 
     def create_value_to_find(self):
-        if self.values:
-            idx = random.randint(0, self.size-1)
-            value_to_find = self.values[idx]
-            return value_to_find
+        idx = random.randint(0, self.size-1)
+        value_to_find = self.values[idx]
+        return value_to_find
 
 
 class Board:
@@ -39,4 +38,8 @@ class Board:
                 row.append(0)
             self.raster.append(row)
 
+    def reset(self):
+        for i in range(self.rows):
+            for j in range(self.cols):
+                self.raster[i][j] = 0
         
