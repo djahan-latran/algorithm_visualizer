@@ -2,7 +2,7 @@
 
 from algorithms import *
 from app_states import AppStates
-from utils import Parameters, Board
+from utils import Parameters, Board, FileReader
 
 #write the controller class
 
@@ -11,6 +11,8 @@ class AppController:
 
     def __init__(self):
         self.states = AppStates()
+        self.file_reader_text = FileReader("./info_texts.yaml")
+        self.file_reader_code = FileReader("./code_texts.yaml")
         self.board = None
         self.parameters = None
     
@@ -31,40 +33,30 @@ class AppController:
         return False
 
     def basic_search_alg_pressed(self, algorithm):
-        self.states.algo_running = False
-        self.reset_draw_pf_info()
-        self.reset_draw_bg_info()
-        
-        self.create_values() if not self.parameters else self.update_values()
-        self.create_value_to_find()
-   
         self.states.curr_algo_cat = "Basic Search"
         self.states.selected_algo = algorithm
+
+        self.reset_btn_pressed()
 
         self.create_generator()
 
     def basic_sort_alg_pressed(self, algorithm):
-        self.states.algo_running = False
-        self.reset_draw_pf_info()
-        self.reset_draw_bg_info()
-
-        self.create_values() if not self.parameters else self.update_values()
-
         self.states.curr_algo_cat = "Basic Sort"
         self.states.selected_algo = algorithm
+        
+        self.reset_btn_pressed()
 
         self.create_generator()
 
     def pathfinding_alg_pressed(self, algorithm):
-        self.states.algo_running = False
-        self.reset_btn_pressed()
-
         #if not board then create one OR reset target_selected to False
         if not self.board:
             self.create_board()
 
         self.states.curr_algo_cat = "Pathfinding"
         self.states.selected_algo = algorithm
+
+        self.reset_btn_pressed()
 
         self.create_generator()
 
@@ -98,9 +90,10 @@ class AppController:
             self.board.reset()
         self.reset_draw_pf_info()
         self.reset_draw_bg_info()
-        self.create_values()
+        self.create_values() if not self.parameters else self.update_values()
         self.create_value_to_find()
         self.set_parameter_reset_true()
+        self.speed_slider_moved()
         self.create_generator()
     
     def set_target_btn_pressed(self):
@@ -122,8 +115,11 @@ class AppController:
         self.reset_draw_bg_info()
         self.create_generator()
 
-    def speed_slider_moved(self, slider_value):
-        self.states.surface_update_intv = 1 / slider_value
+    def speed_slider_moved(self, slider_value= None):
+        if slider_value:
+            self.states.surface_update_intv = 1 / slider_value
+        else:
+            self.states.surface_update_intv = 1/50
 
     def set_parameter_reset_false(self):
         self.states.parameter_reset = False
@@ -150,10 +146,12 @@ class AppController:
         if self.states.curr_algo_cat == "Basic Search":
 
             if self.states.selected_algo == "Linear Search":
+                self.get_text_from_file()
                 lin_search = LinearSearch(self.states.values, self.states.value_to_find, self.states.draw_bg_info)
                 self.states.algo_generator = lin_search.run()
 
             elif self.states.selected_algo == "Binary Search":
+                self.get_text_from_file()
                 self.states.values.sort()
                 bin_search = BinarySearch(self.states.values, self.states.value_to_find, self.states.draw_bg_info)
                 self.states.algo_generator = bin_search.run(self.states.values)
@@ -161,24 +159,29 @@ class AppController:
         elif self.states.curr_algo_cat == "Basic Sort":
 
             if self.states.selected_algo == "Bubble Sort":
+                self.get_text_from_file()
                 bubb_sort = BubbleSort(self.states.values, self.states.draw_bg_info)
                 self.states.algo_generator = bubb_sort.run()
 
             elif self.states.selected_algo == "Selection Sort":
+                self.get_text_from_file()
                 sel_sort = SelectionSort(self.states.values, self.states.draw_bg_info)
                 self.states.algo_generator = sel_sort.run()
             
             elif self.states.selected_algo == "Insertion Sort":
+                self.get_text_from_file()
                 insert_sort = InsertionSort(self.states.values, self.states.draw_bg_info)
                 self.states.algo_generator = insert_sort.run()
         
         elif self.states.curr_algo_cat == "Pathfinding":
 
             if self.states.selected_algo == "Breadth-First-Search":
+                self.get_text_from_file()
                 bf_search = Bfs(self.states.draw_pf_info)
                 self.states.algo_generator = bf_search.run(self.board)
 
             elif self.states.selected_algo == "Depth-First-Search":
+                self.get_text_from_file()
                 df_search = Dfs(self.states.draw_pf_info)
                 self.states.algo_generator = df_search.run(0, 0, self.board)
     
@@ -193,3 +196,8 @@ class AppController:
         rect_no_x = x // self.board.rect_size
         rect_no_y = y // self.board.rect_size
         self.board.raster[rect_no_y][rect_no_x] = 1
+
+    def get_text_from_file(self):
+        self.states.info_text = self.file_reader_text.get_text(self.states.selected_algo)
+        self.states.code_text = self.file_reader_code.get_code_text(self.states.selected_algo)
+
