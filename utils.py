@@ -1,5 +1,9 @@
 import random
-
+import yaml
+import re
+from pygments import highlight
+from pygments.lexers import PythonLexer
+from pygments.formatters import HtmlFormatter
 
 class Parameters:
 
@@ -42,4 +46,33 @@ class Board:
         for i in range(self.rows):
             for j in range(self.cols):
                 self.raster[i][j] = 0
+
+
+class FileReader:
+    def __init__(self, filename):
+        self.filename = filename
+
+        with open(self.filename, "r") as file:
+            self.info_texts = yaml.safe_load(file)
+
+    def get_text(self, algorithm):
+        info_text = self.info_texts[f"{algorithm}"]["definition"]   
         
+        default_font = f"<font face='verdana' color='#ffffff' size=4>{info_text}</font>" 
+
+        return default_font
+    
+    def get_code_text(self,algorithm):
+        code_text = self.info_texts[f"{algorithm}"]["definition"]
+
+        format = HtmlFormatter(noclasses=True, style="monokai")
+        code_text = highlight(code_text, PythonLexer(), format)
+
+        code_text = re.sub(r'<span style="color:\s*(#[0-9a-fA-F]{6})">(.*?)</span>', 
+                           r'<font color="\1">\2</font>',
+                           code_text
+                           )
+
+        default_font = f"<font face='verdana' color='#ffffff' size=4>{code_text}</font>"
+
+        return default_font
