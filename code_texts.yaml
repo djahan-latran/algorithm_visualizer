@@ -1,0 +1,128 @@
+Linear Search:
+  definition: |
+    Code Implementation:
+
+        def linear_search(nums):
+            for i in range(len(nums)):  #loop through the list
+                if nums[i] == value:  #if value is found return True
+                    return True
+
+Binary Search:
+  definition: |
+    Code Implementation:
+
+        def binary_search(nums, target)
+            mid = len(nums)//2  #Get the middle index
+
+            if nums[mid] == target:  #check if value at middle is the target value
+                print(f"{mid} is index of target")
+                return True
+
+            elif nums[mid] < target:  #if target is bigger then search right half
+                right = nums[mid:]      
+                if binary_search(right):
+                    return True
+            
+            else:
+                left = nums[:mid]  #if target is smaller then search left half 
+                if binary_search(left):
+                    return True
+
+Bubble Sort:
+  definition: |
+    Code Implementation:
+
+         def bubble_sort(nums):
+            for i in range(len(nums), 0, -1):  #range of i gets smaller each iteration 
+                for j in range(i-1):   #inner loop goes up until i
+
+                    if nums[j] > nums[j+1]:  #if value at j is bigger than value at i
+
+                        tmp = nums[j]  #swap the values
+                        nums[j] = nums[j+1]
+                        nums[j+1] = tmp
+
+Selection Sort:
+  definition: |
+    Code Implementation:
+
+        def selection_sort(nums):
+            for i in range(len(nums)):
+                for j in range(i+1, len(nums)):  #inner loop starts after index of i
+
+                    if nums[j] < nums[i]:  #if the value in front is smaller
+
+                        tmp = nums[j]  #swap the values
+                        nums[j] = nums[i]
+                        nums[i] = tmp
+
+Insertion Sort:
+  definition: |
+    Code Implementation:
+
+        def insertion_sort(nums):
+            for i in range(1, len(nums)):  #start from second value
+                tmp = nums[i]
+                j = i-1
+                while tmp < nums[j] and j >= 0:  #while value is smaller than current
+                    nums[j+1] = nums[j]          #value keep going left
+                    nums[j] = tmp
+                    j -= 1  #decrease j by 1
+
+Breadth-First-Search:
+  definition: |
+    Code Implementation:
+
+        def bfs(target, board):
+            start_pos = (0, 0)  #first row and column on the grid (topleft)
+
+            queue = deque([start_pos])  #create a deque
+            visited = set([start_pos])  #create a set for visited values
+            directions = [(1, 0), (-1, 0), (0, -1), (0, 1)]  #down, left, right, up
+
+            for i in range(board.rows):  #go through each row
+                for j in range(board.cols):  #and each column
+                    if board[i][j] == 1:  #check for obstacles and add them to visited
+                        visited.add((i, j))
+
+            while queue:  #as long as queue has values
+                x, y = queue.popleft()  #pop from the left
+
+                if board[x][y] == target:  #if target is found return
+                    return 
+
+                for dx, dy in directions:  #add each direction to the current position
+                    new_x, new_y = x + dx, y + dy
+                    
+                    if 0 <= new_x < board.rows and 0 <= new_y < board.cols and 
+                    (new_x, new_y) not in visited:  #check if position is inbounds and not already in visited
+                        queue.append((new_x, new_y))  #add to queue
+                        visited.add((new_x, new_y))  #add to visited
+
+Depth-First-Search:
+  definition: |
+    Code Implementation:
+
+        def dfs(pos_x, pos_y, board, visited):
+            target = 2  #target is value 2
+            directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]   #down, left, right, up
+            
+            if (pos_x < 0 or pos_y < 0 or 
+                pos_x >= board.rows or pos_y >= board.cols or 
+                (pos_x, pos_y) in visited or 
+                board.raster[pos_x][pos_y] == 1):  #if out of bounds, in visited or value 1 (obstacle)
+                return False  #end of path and return 
+
+            visited.add((pos_x, pos_y))
+
+            if board.raster[pos_x][pos_y] == target:
+                return True  #found the target and return
+
+            for dx, dy in directions:
+                if dfs(pos_x + dx, pos_y + dy, board):  #if path returns True then value is found
+                return True
+            
+            return False
+        
+        visited = set()
+        target_found = dfs(0, 0, board, visited)
