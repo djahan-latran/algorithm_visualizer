@@ -100,7 +100,7 @@ class MenuPanel:
                                             container= self.basic_sorts_scroll_panel.element
                                             )
         
-        self.basic_sort_algs.append(self.basic_sorts_btn)
+        #self.basic_sort_algs.append(self.basic_sorts_btn)
         self.basic_sorts_btn.element.disable()
 
         #Create algorithm buttons
@@ -108,7 +108,7 @@ class MenuPanel:
                                     size= (self.btn_width, self.btn_height),
                                     label= "Bubble Sort", 
                                     manager= self.manager, 
-                                    vis= 1, 
+                                    vis= 1,
                                     container= self.basic_sorts_scroll_panel.element
                                     )
         
@@ -135,7 +135,7 @@ class MenuPanel:
         self.basic_sort_algs.append(self.in_sort_btn)
 
         #Make scrollable area actually scrollable and set size to total height of buttons
-        self.basic_sorts_scroll_cont.element.set_scrollable_area_dimensions((self.btn_width, self.btn_height * len(self.basic_sort_algs)))
+        self.basic_sorts_scroll_cont.element.set_scrollable_area_dimensions((self.btn_width, self.btn_height * (len(self.basic_sort_algs) + 1)))
 
     def create_basic_sort_cont(self):
         #Create basic-sorts scroll container and scroll panel inside
@@ -174,7 +174,7 @@ class MenuPanel:
                                        container= self.basic_search_scroll_panel.element
                                        )
         
-        self.basic_search_algs.append(self.basic_search_btn)
+        #self.basic_search_algs.append(self.basic_search_btn)
         self.basic_search_btn.element.disable()
         
         self.linear_search_btn = Button(pos=(0, 45), 
@@ -197,7 +197,7 @@ class MenuPanel:
         
         self.basic_search_algs.append(self.binary_search_btn)
 
-        self.basic_search_scroll_cont.element.set_scrollable_area_dimensions((self.btn_width, self.btn_height * len(self.basic_search_algs)))
+        self.basic_search_scroll_cont.element.set_scrollable_area_dimensions((self.btn_width, self.btn_height * (len(self.basic_search_algs) + 1)))
 
     def create_pathfinding_cont(self):
         #Create pathfinding scroll container and scroll panel inside
@@ -215,7 +215,7 @@ class MenuPanel:
         #Create pathfinding category
         self.pathfinding_btn = Button(pos=(0, 0), 
                                       size=(self.btn_width, self.btn_height), 
-                                      label= "Pathfinding", 
+                                      label= "Tree Search", 
                                       manager= self.manager, 
                                       vis= 1, 
                                       id= "#header_button", 
@@ -244,26 +244,6 @@ class MenuPanel:
                               )
         
         self.pathfinding_algs.append(self.dfs_btn)
-
-        self.astar_btn = Button(pos=(0, self.btn_height * 3), 
-                                size= (self.btn_width, self.btn_height), 
-                                label= "A*Search", 
-                                manager= self.manager,
-                                vis= 1, 
-                                container= self.pathfinding_scroll_panel.element
-                                )
-        
-        self.pathfinding_algs.append(self.astar_btn)
-
-        self.dijkstra_btn = Button(pos=(0, self.btn_height * 4), 
-                                   size= (self.btn_width, self.btn_height), 
-                                   label= "Dijkstra's", 
-                                   manager= self.manager, 
-                                   vis= 1, 
-                                   container= self.pathfinding_scroll_panel.element
-                                   )
-        
-        self.pathfinding_algs.append(self.dijkstra_btn)
 
         self.pathfinding_scroll_cont.element.set_scrollable_area_dimensions((self.btn_width, self.btn_height * len(self.pathfinding_algs)))
 
@@ -306,9 +286,12 @@ class MenuPanel:
 
 class AnimationPanel:
 
-    def __init__(self, screen, controller):
+    def __init__(self, fonts, colours, screen, controller):
         #Main surface to draw animation surface on
         self.screen = screen
+
+        self.colours = colours
+        self.fonts = fonts
 
         #Controller
         self.controller = controller
@@ -322,7 +305,7 @@ class AnimationPanel:
 
         #Colors for different value states (bar graph)
         self.def_bar_cl = (50, 50, 50)
-        self.curr_bar_cl = (120, 120, 120)
+        self.curr_bar_cl = (150, 150, 150)
         self.sortd_bar_cl = (50, 255, 50)
         self.red_bar_cl = (200, 50, 50)
 
@@ -425,7 +408,7 @@ class AnimationPanel:
             y_coord += board.rect_size
             x_coord = 0 
 
-    def update(self):
+    def still_frame(self):
         if self.controller.states.selected_algo and not self.controller.states.algo_running:
             
             if not self.controller.states.anim_surf_size:
@@ -435,7 +418,18 @@ class AnimationPanel:
                 self.draw_board(self.controller.board)
             else:
                 self.draw_bar_graphs(self.controller.states.values)
+    
+    def update(self):
+        self.still_frame()
                 
+        if self.controller.states.curr_algo_cat == "Basic Search":
+            self.target_value = self.fonts.slider.render(f"Looking for '{self.controller.states.value_to_find}'", 
+                                                         True, 
+                                                         self.colours.values["accent_cl"]
+                                                         )
+            self.target_value_rect = self.target_value.get_rect()
+            self.target_value_rect.topleft = (15, 5)
+            self.surface.blit(self.target_value, self.target_value_rect)
 
         if self.controller.states.next_animation_frame:
             
@@ -462,18 +456,38 @@ class AnimationPanel:
             if pg.mouse.get_pressed()[0] and self.pos[0] < mouse_x < self.pos[0] + self.size[0] and self.pos[1] < mouse_y < self.pos[1] + self.size[1]:
                 surface_x, surface_y = mouse_x - self.pos[0], mouse_y - self.pos[1]
                 self.controller.set_obstacle_on_board(surface_x, surface_y)
-
+    
     def blit_surface(self):
         self.screen.blit(self.surface, self.pos)
 
 class CodePanel:
 
-    def __init__(self):
-        pass
-        # self.code_box_rect = pg.Rect((self.anim_canvas_pos[0], self.anim_canvas_pos[1] + self.anim_canvas_size[1] + 5), (self.anim_canvas_size[0], 220))
-        # self.code_box = pg_gui.elements.UITextBox("Testing", self.bs_code_box_rect, object_id= "#info_text_box")
-        # self.code_box.hide()
+    def __init__(self, manager, controller):
+        self.pos = (185, 455)
+        self.size = (680, 220)
 
+        self.pg_manager = manager
+        self.controller = controller
+
+        self.code_window = None
+        self.current_algo = None
+
+    def create_window(self):
+        if self.controller.states.selected_algo and not self.code_window:
+            self.code_window = TextWindow(self.pos, 
+                                            self.size, 
+                                            self.pg_manager,
+                                            self.controller.states.code_text
+                                         )
+
+    def update(self):
+        if self.controller.states.selected_algo != self.current_algo:
+            self.code_window = TextWindow(self.pos, 
+                                          self.size, 
+                                          self.pg_manager,
+                                          self.controller.states.code_text
+                                          ) 
+            self.current_algo = self.controller.states.selected_algo
 
 class SettingsPanel:
     
@@ -560,9 +574,6 @@ class SettingsPanel:
         self.create_control_sliders()
         self.create_slider_titles()
 
-    def create_pf_settings(self):
-        pass
-
     def show_bg_control_btns(self):
         self.play_btn.element.show()
         self.reset_btn.element.show()
@@ -573,9 +584,6 @@ class SettingsPanel:
         self.speed_slider.element.enable()
         self.set_target_btn.element.hide()
         self.set_obstacle_btn.element.hide()
-    
-    def hide_bg_control_btns(self):
-        pass
 
     def show_pf_control_btns(self):
         self.play_btn.element.show()
@@ -587,9 +595,6 @@ class SettingsPanel:
         self.speed_slider.element.enable()
         self.set_target_btn.element.show()
         self.set_obstacle_btn.element.show()
-    
-    def hide_pf_control_btns(self):
-        pass
     
     def event_handle_btns(self, event):
         if event.ui_element == self.play_btn.element:
@@ -617,45 +622,48 @@ class SettingsPanel:
             self.controller.speed_slider_moved(curr_slider_value)
 
     def update(self):
-        if self.controller.states.curr_algo_cat == "Pathfinding":
-            self.show_pf_control_btns()
-        else:
-            self.show_bg_control_btns()
-        
+        if self.controller.states.selected_algo:
+            if self.controller.states.curr_algo_cat == "Pathfinding":
+                self.show_pf_control_btns()
+ 
+            else:
+                self.show_bg_control_btns()
+
         if self.controller.states.parameter_reset:
-            print("It goes here")
             self.size_slider.element.set_current_value(20)
+            self.speed_slider.element.set_current_value(50)
             self.controller.set_parameter_reset_false()
     
     def blit_slider_titles(self):
-        if self.controller.states.curr_algo_cat == "Pathfinding":
-            self.blit_speed_slider_title()
-        else:
-            self.blit_speed_slider_title()
-            self.blit_size_slider_title()
+        if self.controller.states.selected_algo:
+            if self.controller.states.curr_algo_cat == "Pathfinding":
+                self.blit_speed_slider_title()
+            else:
+                self.blit_speed_slider_title()
+                self.blit_size_slider_title()
 
 
 class InfoPanel:
 
-    def __init__(self, fonts, colours, file_reader): #fix this
-        pass
-        # self.fonts = fonts
-        # self.colours = colours 
+    def __init__(self, fonts, colours, manager, controller):
+        self.fonts = fonts
+        self.colours = colours 
+        self.controller = controller
+        self.manager = manager
 
-        # #Info icon parameters
-        # self.info_circle_dim = 45
-        # self.anchor_x = 1035
-        # self.anchor_y = 360
+        self.info_window = None
+        self.current_algo = None
 
-        # #Info box parameters
-        # self.box_pos = (868, 360)
-        # self.box_size = (334, 340)
-        # self.file_reader = file_reader
+        #Info icon parameters
+        self.info_circle_dim = 45
+        self.anchor_x = 1035
+        self.anchor_y = 360
 
-        # text = self.file_reader.get_text()
-        # self.info_window = TextWindow(self.box_pos, self.box_size, self.text)
+        #Info box parameters
+        self.box_pos = (868, 360)
+        self.box_size = (334, 340)
     
-    def render_header(self, screen):
+    def create_header(self):
         #Create info icon
         self.info_circle_rect = pg.Rect((self.anchor_x - self.info_circle_dim / 2, self.anchor_y - self.info_circle_dim / 2), 
                                         (self.info_circle_dim, self.info_circle_dim)
@@ -663,10 +671,32 @@ class InfoPanel:
     
         self.letter_i = self.fonts.info_icon.render("i", True, self.colours.values["text_cl"])
         self.letter_i_rect = self.letter_i.get_rect()
-        self.letter_i_rect.center = (1035-1,360-1) #make variables then subtract 1
+        self.letter_i_rect.center = (self.anchor_x - 1, self.anchor_y - 1) #make variables then subtract 1
+
+    def draw_header(self, screen):
+        if self.controller.states.selected_algo:
+            pg.draw.line(screen, self.colours.values["accent_cl"], (870,360), (1200,360), 5)
+            pg.draw.ellipse(screen, self.colours.values["accent_cl"], self.info_circle_rect)
+            screen.blit(self.letter_i, self.letter_i_rect)
         
-        pg.draw.line(screen, self.colours.values["accent_cl"], (870,360), (1200,360), 5)
-        pg.draw.ellipse(screen, self.colours.values["accent_cl"], self.info_circle_rect)
+    def create_window(self):
+        if self.controller.states.selected_algo and not self.info_window:
+            self.current_algo = self.controller.states.selected_algo
+            self.info_window = TextWindow(self.box_pos, 
+                                          self.box_size, 
+                                          self.manager,
+                                          self.controller.states.info_text
+                                          )
+                                             
+
+    def update(self):
+        if self.controller.states.selected_algo != self.current_algo:
+            self.info_window = TextWindow(self.box_pos, 
+                                          self.box_size, 
+                                          self.manager,
+                                          self.controller.states.info_text
+                                          )
+            self.current_algo = self.controller.states.selected_algo
 
 
-
+        
