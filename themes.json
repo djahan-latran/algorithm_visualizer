@@ -40,8 +40,7 @@
         "colours":
         {
             "normal_bg": "#3abaf9",
-            "normal_text": "#ffffff",
-            "normal_border": "#e6e6e6"
+            "normal_text": "#ffffff"
         },
         "font":
         {
@@ -50,8 +49,7 @@
         "misc":
         {
             "shape": "rounded_rectangle",
-            "shape_corner_radius": "8,8,8,8",
-            "border_width": "1"
+            "shape_corner_radius": "8,8,8,8"
         }
     },
 
