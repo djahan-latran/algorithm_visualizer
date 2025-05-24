@@ -5,7 +5,6 @@ import pygame_gui as pg_gui
 from algorithms import *
 from gui_manager import GuiManager
 from app_controller import AppController
-from utils import Parameters, Board
 import time
 
 
@@ -49,8 +48,6 @@ class MainApp:
 
         self.gui_manager = GuiManager(self.controller, self.pg_manager)
         self.gui_manager.create_gui()
-
-        
         
         self.run_application_loop()
 
@@ -91,14 +88,18 @@ class MainApp:
             self.gui_manager.animation_panel.update()
             self.gui_manager.animation_panel.blit_surface()
             self.gui_manager.main_panel.update()
-            if self.controller.states.curr_algo_cat:
-                self.gui_manager.settings_panel.update()
-                self.gui_manager.settings_panel.blit_slider_titles()
+            self.gui_manager.settings_panel.update()
+            self.gui_manager.settings_panel.blit_slider_titles()
+            self.gui_manager.info_panel.create_window()
+            self.gui_manager.info_panel.update()
+            self.gui_manager.code_panel.create_window()
+            self.gui_manager.code_panel.update()
             
             #Update pygame_gui manager
             self.pg_manager.update(time_delta)
-            self.pg_manager.draw_ui(self.gui_manager.main_panel.screen)   
-            
+            self.pg_manager.draw_ui(self.gui_manager.main_panel.screen)
+            #Draw header lastly so it is above info_text panel   
+            self.gui_manager.info_panel.draw_header(self.gui_manager.main_panel.screen)
             self.update()
 
         pg.quit()
