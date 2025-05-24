@@ -6,7 +6,7 @@ class AppStates:
         self.app_running = False
         self.algo_running = False
 
-        self.surface_update_intv = 1/20
+        self.surface_update_intv = 1/50
         self.gui_update_intv = 1/60
         self.surface_updated = 0
         self.gui_updated = 0
@@ -17,6 +17,9 @@ class AppStates:
         self.curr_algo_cat = None
         self.value_to_find = None
         self.values = None
+        self.info_text = None
+        self.code_text = None
+        self.text_updated = False
 
         self.target_sel_phase = False
         self.target_selected = False
