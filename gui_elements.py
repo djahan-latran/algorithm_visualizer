@@ -52,9 +52,13 @@ class Slider:
 
 
 class TextWindow:
-    def __init__(self, pos, size, text):
+    def __init__(self, pos, size, manager, text):
         self.pos = pos
         self.size = size
         box_rect = pg.Rect(self.pos, self.size)
         self.text = text
-        self.element = pg_gui.elements.UITextBox(self.text, box_rect, object_id="#info_text_box")
+        self.element = pg_gui.elements.UITextBox(self.text, 
+                                                 box_rect, 
+                                                 manager, 
+                                                 object_id="#info_text_box"
+                                                 )
