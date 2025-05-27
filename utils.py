@@ -13,7 +13,7 @@ class Parameters:
 
     def create_values(self):
         #Create values attribute
-        self.values = random.sample(range(100), self.size)
+        self.values = random.sample(range(1, 100), self.size)
         return self.values
 
     def create_value_to_find(self):
@@ -39,13 +39,13 @@ class Board:
         for _ in range(self.rows):
             row = []
             for _ in range(self.cols):
-                row.append(0)
+                row.append(1)
             self.raster.append(row)
 
     def reset(self):
         for i in range(self.rows):
             for j in range(self.cols):
-                self.raster[i][j] = 0
+                self.raster[i][j] = 1
 
 
 class FileReader:
