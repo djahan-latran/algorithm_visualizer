@@ -126,3 +126,54 @@ Depth-First-Search:
         
         visited = set()
         target_found = dfs(0, 0, board, visited)
+
+Dijkstra:
+  definition: |
+    Code Implementation:
+
+    import heapq
+
+        def dijkstra(board):
+            start_pos = (0, 0)
+            target = 2
+            distances = [[float('inf')] * board.cols for _ in range(board.rows)]
+            distances[self.start_pos[0]][self.start_pos[1]] = 0
+
+            directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+
+            min_heap = [(0, self.start_pos[0], self.start_pos[1])]
+            previous = {}
+
+            value_found = False
+
+            while min_heap:
+                dist, row, col = heapq.heappop(min_heap)
+                
+                if board.raster[row][col] == target:
+                    break
+
+                for direction_row, direction_col in directions:
+                    new_row, new_col = row + direction_row, col + direction_col
+
+                    if 0 <= new_row < board.rows and 0 <= new_col < board.cols:
+                        if board.raster[new_row][new_col] == -1:
+                            continue
+                        
+                        new_dist = dist + board.raster[new_row][new_col]
+                        if new_dist < distances[new_row][new_col]:
+                            heapq.heappush(min_heap, (new_dist, new_row, new_col))
+                            distances[new_row][new_col] = new_dist
+                            previous[(new_row, new_col)] = (row, col)
+            
+
+            shortest_path = []
+
+            while location in previous:
+                shortest_path.append(location)
+                location = previous[location]
+            
+            if shortest_path:
+                shortest_path.append(start_pos)
+                shortest_path.reverse()
+            
+            return shortest_path
