@@ -1,51 +1,42 @@
 TASKS
 
-- REFACTOR !!!
-- [x] use file to import text for info panel. make it vary depending on selected algo
-- create class to render text
-- create class to blit to surface
-- scrollable area of scroll container should adjust to total height of all buttons
+1. [x] Info Panel  
+2. [x] Code Panel   
+3. [x] Pathfinding Algorithm (Dijstra or A*)  2
+4. Merge Sort / Quick Sort Visualization  2
+5. [x] write comments on code in code panel
+6. [x] refactor AnimationPanel update method
+7. [x] when play pressed -> obstacle selection phase False
+8. have instruction in info panel AND OR button selection to indicate what to do
+9. error handling
+10. comment and clean all the code
+11. tests
+12. [x] make button text white when clicked/hover over
+13. [x] implement dijkstra text and code text
+14. put everything in folders
+
+- [x] REFACTOR !!!
 - algorithm class that init's the basic parameter like self.nums, self.value_info etc and passes those to
   more specific algorithm classe e.g. BubbleSort, SelectionSort etc.
-- [x] size slider 
-- [x] binary search 
-- linear and binary search need value to be found displayed
-- [x] implement breadth-first-search
-- [x] implement depth-first-search
-- finish the ui-template
-- rename file "inputs.py" 
-- maybe make a "basic search" category and then another "tree search" category for bfs and dfs 
+- [x] linear and binary search need value to be found displayed
 - make menu panel size parametric -> height adjusts to button amounts but buttons get created in a LOOP
 
 BUGS/FIXES
 
 - General
-  - [x] if you play an algorithm and you press pause and then switch to another algorithm 
-    and press play again, the algorithm continues from previous state instead of starting all over
-    with the new values
-  - [x] while holding the slider button the values change very quickly and continuously -> set interval for gui update (like for animation update)
-  - bar graphs don't take up the whole surface screen at certain sizes in width
-  - size slider position when selecting an algorithm and after resetting it
-  - fix FileReader flow -> should reload text for current algorithm
+  - when changing list size for bar graph visualizations 
+    bar graph width doesn't adjust to surface size properly
 
 - Binary search
-  - sometimes no green value at the end
-  - sometimes "self.value_info["neutral"] = [nums[mid]]" -> list index out of range
-
-- Pathfinding
-  - speed is same as set speed in bar graph visualizations -> add speed slider
-  - [x] have user select the target  --> have to check boundaries when clicking the sel_target button
-  - [x] need variable to let know that a target rectangle was selected (no multiple targets)
-  - [x] need to properly find value 2
-  - [x] have a button to select obstacles
-
-- BFS
-  - [x] not finding the 'value' -> check coordinate and value 
-  - seems like the algorithm realizes that it found the target a bit to late -> check algorithm structure (not necessarily the case)
-
-- Dfs
-  - [x] fix recursive yield
-  - [x] doesn't stop when target is found (BIG PROBLEM)
+  - [x] sometimes no green value at the end
+  - [x] sometimes "self.value_info["neutral"] = [nums[mid]]" -> list index out of range
 
 - InfoPanel
-  - text window not showing all the text
+  - [x] text window not showing all the text
+
+- CodePanel
+  - Scrollbar duplicates whenever another algorithm is selected
+
+- Algorithm
+  - Dijkstra
+    - [x] when algorithm doesnt find the target the application crashes
