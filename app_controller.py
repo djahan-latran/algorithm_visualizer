@@ -75,6 +75,7 @@ class AppController:
 
     def play_btn_pressed(self):
         self.states.algo_running = True
+        self.states.obstacle_sel_phase = False
         self.states.obstacle_selected = True
 
     def pause_btn_pressed(self):
@@ -184,18 +185,24 @@ class AppController:
                 self.get_text_from_file()
                 df_search = Dfs(self.states.draw_pf_info)
                 self.states.algo_generator = df_search.run(0, 0, self.board)
+            
+            elif self.states.selected_algo == "Dijkstra":
+                self.get_text_from_file()
+                dijkstra_search = Dijkstras(self.states.draw_pf_info)
+                self.states.algo_generator = dijkstra_search.run(self.board)
     
     def set_target_on_board(self, x, y):
         rect_no_x = x // self.board.rect_size
         rect_no_y = y // self.board.rect_size
         self.board.raster[rect_no_y][rect_no_x] = 2
+        self.states.target_loc = (rect_no_y, rect_no_x)
         self.states.target_selected = True
         self.states.target_sel_phase = False
     
     def set_obstacle_on_board(self, x, y):
         rect_no_x = x // self.board.rect_size
         rect_no_y = y // self.board.rect_size
-        self.board.raster[rect_no_y][rect_no_x] = 1
+        self.board.raster[rect_no_y][rect_no_x] = -1
 
     def get_text_from_file(self):
         self.states.info_text = self.file_reader_text.get_text(self.states.selected_algo)
