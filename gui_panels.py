@@ -215,7 +215,7 @@ class MenuPanel:
         #Create pathfinding category
         self.pathfinding_btn = Button(pos=(0, 0), 
                                       size=(self.btn_width, self.btn_height), 
-                                      label= "Tree Search", 
+                                      label= "Graph Search", 
                                       manager= self.manager, 
                                       vis= 1, 
                                       id= "#header_button", 
@@ -244,6 +244,16 @@ class MenuPanel:
                               )
         
         self.pathfinding_algs.append(self.dfs_btn)
+
+        self.dijkstra_btn = Button(pos=(0, self.btn_height * 3), 
+                              size= (self.btn_width, self.btn_height), 
+                              label= "Dijkstra's", 
+                              manager= self.manager, 
+                              vis= 1,
+                              container= self.pathfinding_scroll_panel.element
+                              )
+        
+        self.pathfinding_algs.append(self.dijkstra_btn)
 
         self.pathfinding_scroll_cont.element.set_scrollable_area_dimensions((self.btn_width, self.btn_height * len(self.pathfinding_algs)))
 
@@ -279,6 +289,9 @@ class MenuPanel:
 
         elif event.ui_element == self.dfs_btn.element:
             self.controller.pathfinding_alg_pressed("Depth-First-Search")
+
+        elif event.ui_element == self.dijkstra_btn.element:
+            self.controller.pathfinding_alg_pressed("Dijkstra")
 
         else:
             pass  #another algorithm can be added here
@@ -378,30 +391,33 @@ class AnimationPanel:
 
         end_pos = (len(board.raster), len(board.raster[1]))
 
+        path = self.controller.states.draw_pf_info.get("path")
+        current = self.controller.states.draw_pf_info.get("current")
+        visited = self.controller.states.draw_pf_info.get("visited")
+
         for i in range(board.rows):
             for j in range(board.cols):
                 sq_rect = pg.Rect(x_coord, y_coord, board.rect_size, board.rect_size)
 
-                if board.raster[i][j] == 1:
+                if board.raster[i][j] == -1:
                     pg.draw.rect(self.surface, self.obstacle_rect_cl, sq_rect)
                     
                 elif board.raster[i][j] == 2:
                     pg.draw.rect(self.surface, self.target_rect_cl, sq_rect)
-
-                elif end_pos and (i, j) == end_pos:  #check if this is still necessary
-                    pg.draw.rect(self.surface, self.target_rect_cl, sq_rect)
                     
-                elif self.controller.states.draw_pf_info["current"] and (i, j) == self.controller.states.draw_pf_info["current"]:
+                elif current and (i, j) == current:
                     pg.draw.rect(self.surface, self.blue_rect_cl, sq_rect, 3)
                     
-                elif self.controller.states.draw_pf_info["visited"] and (i, j) in self.controller.states.draw_pf_info["visited"]:
+                elif visited and (i, j) in visited:
                     pg.draw.rect(self.surface, self.curr_rect_cl, sq_rect)
                     pg.draw.rect(self.surface, self.def_rect_bord_cl, sq_rect, 1)
-                    
+                
+                elif path and (i, j) in path:
+                    pg.draw.rect(self.surface, self.blue_rect_cl, sq_rect)
+
                 else:
                     pg.draw.rect(self.surface, self.def_rect_cl, sq_rect)
                     pg.draw.rect(self.surface, self.def_rect_bord_cl, sq_rect, 1)
-                    
 
                 x_coord += board.rect_size
 
@@ -419,9 +435,18 @@ class AnimationPanel:
             else:
                 self.draw_bar_graphs(self.controller.states.values)
     
-    def update(self):
-        self.still_frame()
-                
+    def next_animation_frame(self):
+        if self.controller.states.next_animation_frame:
+        
+            if self.controller.states.curr_algo_cat == "Pathfinding":
+                self.draw_board(self.controller.board) 
+            else:
+                self.draw_bar_graphs(self.controller.states.values)
+        
+            self.controller.next_algorithm_step()
+            self.controller.states.next_animation_frame = False
+
+    def blit_target_value(self):
         if self.controller.states.curr_algo_cat == "Basic Search":
             self.target_value = self.fonts.slider.render(f"Looking for '{self.controller.states.value_to_find}'", 
                                                          True, 
@@ -431,16 +456,7 @@ class AnimationPanel:
             self.target_value_rect.topleft = (15, 5)
             self.surface.blit(self.target_value, self.target_value_rect)
 
-        if self.controller.states.next_animation_frame:
-            
-            if self.controller.states.curr_algo_cat == "Pathfinding":
-                self.draw_board(self.controller.board) 
-            else:
-                self.draw_bar_graphs(self.controller.states.values)
-            
-            self.controller.next_algorithm_step()
-            self.controller.states.next_animation_frame = False
-
+    def pf_target_selection(self):
         if  self.controller.states.target_sel_phase and not self.controller.states.algo_running and not self.controller.states.target_selected:
             mouse_pos = pg.mouse.get_pos()
             mouse_x, mouse_y = mouse_pos[0], mouse_pos[1]
@@ -449,6 +465,7 @@ class AnimationPanel:
                 surface_x, surface_y = mouse_x - self.pos[0], mouse_y - self.pos[1]
                 self.controller.set_target_on_board(surface_x, surface_y)
 
+    def pf_obstacle_selection(self):
         if self.controller.states.obstacle_sel_phase and not self.controller.states.algo_running:
             mouse_pos = pg.mouse.get_pos()
             mouse_x, mouse_y = mouse_pos[0], mouse_pos[1]
@@ -456,9 +473,17 @@ class AnimationPanel:
             if pg.mouse.get_pressed()[0] and self.pos[0] < mouse_x < self.pos[0] + self.size[0] and self.pos[1] < mouse_y < self.pos[1] + self.size[1]:
                 surface_x, surface_y = mouse_x - self.pos[0], mouse_y - self.pos[1]
                 self.controller.set_obstacle_on_board(surface_x, surface_y)
+
+    def update(self):
+        self.still_frame()
+        self.next_animation_frame()
+        self.blit_target_value()        
+        self.pf_target_selection()
+        self.pf_obstacle_selection()
     
     def blit_surface(self):
         self.screen.blit(self.surface, self.pos)
+
 
 class CodePanel:
 
@@ -488,6 +513,7 @@ class CodePanel:
                                           self.controller.states.code_text
                                           ) 
             self.current_algo = self.controller.states.selected_algo
+
 
 class SettingsPanel:
     
@@ -610,6 +636,7 @@ class SettingsPanel:
             self.controller.set_target_btn_pressed()
         
         elif event.ui_element == self.set_obstacle_btn.element:
+            self.set_obstacle_btn.element.select()
             self.controller.set_obstacle_btn_pressed()
 
     def event_handle_sliders(self, event):
