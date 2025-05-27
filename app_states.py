@@ -23,6 +23,7 @@ class AppStates:
 
         self.target_sel_phase = False
         self.target_selected = False
+        self.target_loc = None
 
         self.obstacle_sel_phase = False
         self.obstacle_selected = False
@@ -37,4 +38,4 @@ class AppStates:
         self.next_animation_frame = False
 
         self.draw_bg_info = {"positive": [], "neutral": [], "negative": []}
-        self.draw_pf_info = {"current": None, "visited": None}
+        self.draw_pf_info = {"current": None, "visited": None, "path": None}
