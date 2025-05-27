@@ -58,3 +58,9 @@ Depth-First-Search:
 
     <u><b>Definition:</b></u>
     In contrast to Breadth-First-Search, which visits each neighbouring node first before moving to their neighbours, Depth-First-Search goes deep into one path first. When that path ends and the value wasn't found yet, it backtracks to the next path. DFS is often implemented by using recursion.</font>
+
+Dijkstra:
+  definition: |
+    
+    <u><b>Definition:</b></u>
+    The Dijkstra algorithm is used to find the shortest path/distance from one node (starting node) to any other node (target node) in a weighted graph. It takes in account the cost (weight) of each edge to calculate the shortest distance. It can be used for example in AI pathfinding in video games, for GPS navigation and network routing. The algorithm was named after its inventor, Edsger W. Dijkstra</font>
