@@ -3,7 +3,7 @@
     {
         "colours":
         {
-            "normal_bg": "#25292e",
+            "normal_bg": "#141414",
             "hovered_bg": "#35393e",
             "disabled_bg": "#25292e",
             "selected_bg": "#25292e",
@@ -40,7 +40,8 @@
         "colours":
         {
             "normal_bg": "#3abaf9",
-            "normal_text": "#ffffff"
+            "normal_text": "#ffffff",
+            "selected_bg": "#c4c4c4"
         },
         "font":
         {
@@ -79,6 +80,7 @@
             "normal_bg": "#525252",
             "normal_text": "#ffffff",
             "selected_text": "#ffffff",
+            "hovered_text": "#ffffff",
             "selected_bg": "#3abaf9",
             "active_bg": "#3abaf9"
         }
@@ -106,6 +108,23 @@
         "misc":
         {
             "border_width": "0"
+        }
+    },
+
+    "text_box.vertical_scroll_bar":
+    {
+        "colours":
+        {
+            "dark_bg":"#141414"
+        }
+    },
+
+    "text_box.vertical_scroll_bar.#sliding_button":
+    {
+        "misc":
+        {
+           "shape": "rounded_rectangle",
+           "shape_corner_radius": "10"
         }
     }
 }
