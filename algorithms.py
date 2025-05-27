@@ -1,6 +1,6 @@
 """A modul containen different search, sort and pathfinding algorithm classes for the AnimationCanvas"""
 from collections import deque
-
+import heapq
 
 class AlgorithmModel:
     def __init__(self):
@@ -183,7 +183,7 @@ class Bfs:
 
         for i in range(board.rows):
             for j in range(board.cols):
-                if board.raster[i][j] == 1:
+                if board.raster[i][j] == -1:
                     visited.add((i, j))
 
         while queue:
@@ -216,7 +216,7 @@ class Dfs:
 
     def run(self, pos_x, pos_y, board):
         
-        if  pos_x < 0 or pos_y < 0 or pos_x >= board.rows or pos_y >= board.cols or (pos_x, pos_y) in self.visited or board.raster[pos_x][pos_y] == 1:
+        if  pos_x < 0 or pos_y < 0 or pos_x >= board.rows or pos_y >= board.cols or (pos_x, pos_y) in self.visited or board.raster[pos_x][pos_y] == -1:
             return
         
         self.value_info["current"] = (pos_x, pos_y)
@@ -240,11 +240,63 @@ class Dfs:
                 return True
 
 
-class Astar:
-    def __init__(self):
-        pass
-
-
 class Dijkstras:
-    def __init__(self):
-        pass
+    def __init__(self, value_info):
+        self.start_pos = (0, 0)
+        self.value_info = value_info
+        self.directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+        self.target = 2
+
+    def run(self, board):
+        visited = set([self.start_pos])
+        distances = [[float('inf')] * board.cols for _ in range(board.rows)]
+        distances[self.start_pos[0]][self.start_pos[1]] = 0
+
+        min_heap = [(0, self.start_pos[0], self.start_pos[1])]
+        previous = {}
+
+        value_found = False
+
+        while min_heap:
+            dist, row, col = heapq.heappop(min_heap)
+            visited.add((row, col))
+            self.value_info["current"] = (row, col)
+            self.value_info["visited"] = visited
+
+            yield
+            
+            if board.raster[row][col] == self.target:
+                target_pos = (row, col)
+                value_found = True
+                break
+
+            for direction_row, direction_col in self.directions:
+                new_row, new_col = row + direction_row, col + direction_col
+
+                if 0 <= new_row < board.rows and 0 <= new_col < board.cols:
+                    if board.raster[new_row][new_col] == -1:
+                        continue
+                    
+                    new_dist = dist + board.raster[new_row][new_col]
+                    if new_dist < distances[new_row][new_col]:
+                        heapq.heappush(min_heap, (new_dist, new_row, new_col))
+                        distances[new_row][new_col] = new_dist
+                        previous[(new_row, new_col)] = (row, col)
+        
+        if value_found:
+            shortest_path = set([])
+            location = target_pos
+            visited.remove(self.start_pos)
+
+            while location in previous:
+                shortest_path.add(location)
+                visited.remove(location)
+                location = previous[location]
+                self.value_info["path"] = shortest_path
+                yield
+            shortest_path.add(self.start_pos)
+            self.value_info["path"] = shortest_path
+            yield
+        else:
+            return
+        
