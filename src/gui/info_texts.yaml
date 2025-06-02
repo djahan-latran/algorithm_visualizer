@@ -1,0 +1,66 @@
+Linear Search:
+  definition: |
+    <u><b>Complexity:</b></u>
+    Best Case (first element matches): <b>O(1)</b>
+    Average & Worst Case: <b>O(n)</b> 
+
+    <u><b>Definition:</b></u>
+    Linear Search is the most basic search algorithm. It starts with the first element of the list and compares it to the target value. If they match then it found the target, if not the algorithm checks the next element and repeats the steps until it found the target.</font>
+
+Binary Search:
+  definition: |
+    <u><b>Complexity:</b></u>
+    Best Case: <b>O(1)</b>
+    Average & Worst Case: <b>O(log n)</b> 
+
+    <u><b>Definition:</b></u>
+    With an average time complexity of log n, binary search is a very efficient search algorithm that requies the list to be sorted to work. It checks for the middle element, if the target value is smaller it will continue to search in the left half of the list. On the other hand if the target value is bigger then it will check the middle element of the right half of the list. With each step the algorithm rules out half of the remaining elements, which makes it so efficient.</font>
+
+Bubble Sort:
+  definition: |
+    <u><b>Complexity:</b></u>
+    Best Case (already sorted): <b>O(n)</b>
+    Average & Worst Case: <b>O(n²)</b> 
+
+    <u><b>Definition:</b></u>
+    Bubble Sort is a simple sorting algorithm that repeatedly compares adjacent elements and swaps them if they are in the wrong order. This process continues until no more swaps are needed, meaning the list is fully sorted. With each pass, the largest value 'bubbles up' to its correct position on the right.The algorithm then repeats for the remaining unsorted elements until the entire list is ordered.</font>
+
+Selection Sort:
+  definition: |
+    <u><b>Complexity:</b></u>
+    Best Case (already sorted): <b>O(n²)</b>
+    Average & Worst Case: <b>O(n²)</b> 
+
+    <u><b>Definition:</b></u>
+    Selection Sort is a simple sort algorithm that is based on comparisons. The algorithm goes through the entire unsorted part of the list and swaps the smallest element of the unsorted list with the first element of the unsorted list and repeats the process until the list is sorted. With each pass of the first loop, the amount of comparisons in the inner loop become smaller.</font>
+
+Insertion Sort:
+  definition: |
+    <u><b>Complexity:</b></u>
+    Best Case (already sorted): <b>O(n)</b>
+    Average & Worst Case: <b>O(n²)</b> 
+
+    <u><b>Definition:</b></u>
+    This basic sort algorithm compares each new element with all the elements before it and inserts it in the correct position. The algorithm starts with the second element and assumes that the first element is already sorted. If the list is already nearly sorted then fewer comparisons have to be made and the time complexity can be O(n). </font>
+
+Breadth-First-Search:
+  definition: |
+    <u><b>Complexity:</b></u>
+    O(N+E) dependent on amount of nodes and edges 
+
+    <u><b>Definition:</b></u>
+    This tree traversal algorithm checks all neighbours of a node before it goes to check all of their neighbors. This means the algorithm moves level by level through the tree until it found the target value. This algorithm can also be used to find the shortest path in an unweighted graph.</font>
+
+Depth-First-Search:
+  definition: |
+    <u><b>Complexity:</b></u>
+    O(N+E) dependent on amount of nodes and edges 
+
+    <u><b>Definition:</b></u>
+    In contrast to Breadth-First-Search, which visits each neighbouring node first before moving to their neighbours, Depth-First-Search goes deep into one path first. When that path ends and the value wasn't found yet, it backtracks to the next path. DFS is often implemented by using recursion.</font>
+
+Dijkstra:
+  definition: |
+    
+    <u><b>Definition:</b></u>
+    The Dijkstra algorithm is used to find the shortest path/distance from one node (starting node) to any other node (target node) in a weighted graph. It takes in account the cost (weight) of each edge to calculate the shortest distance. It can be used for example in AI pathfinding in video games, for GPS navigation and network routing. The algorithm was named after its inventor, Edsger W. Dijkstra</font>
