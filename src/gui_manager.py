@@ -3,9 +3,33 @@ from src.gui.gui_panels import MainPanel, MenuPanel, AnimationPanel, CodePanel, 
 from src.utility.styles import AppColours, AppFonts
 
 
-class GuiManager: #let the manager go through events and delegate them to panels?
+class GuiManager:
+    """
+    Initiates and bundles the different panel sections.
+    """
     
     def __init__(self, controller, pg_manager):
+        """
+        Initiates the GuiManager instance.
+
+        Parameters
+        ----------
+
+        controller : class instance
+            Controller instance for app logic
+
+        pg_manager : class instance
+            the pygame_gui manager that is needed to update the gui elements.
+
+        Attributes
+        ----------
+
+        fonts : class instance
+            AppFonts instance to pass to the panels
+        
+        colours : class instance
+            AppColours instance to pass to the panels
+        """
         self.controller = controller
         self.pg_manager = pg_manager
         
@@ -14,7 +38,10 @@ class GuiManager: #let the manager go through events and delegate them to panels
         self.colours = AppColours()
     
     def create_gui(self):
-        #Create panels
+        """
+        Creates the different panels
+        """
+
         self.main_panel = MainPanel(self.fonts, 
                                     self.colours, 
                                     self.controller

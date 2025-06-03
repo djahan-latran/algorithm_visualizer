@@ -4,23 +4,55 @@ import heapq
 
 class AlgorithmModel(ABC):
     def __init__(self, value_info):
+        """
+        Initiates the abstract base class for algorithms.
+
+        Parameters
+        ----------
+
+        value_info : dict
+            categorises values based on keys. The information is then read by the View to visualize the current state.
+        """
         self.value_info = value_info
     
     @abstractmethod
     def run(self):
-        """ This method has to be implemented for each algorithm as a generator that yields sub results
-            back to the controller so that the view can update the visuals.
+        """
+        This method has to be implemented for each algorithm as a generator that yields sub results
+        back to the controller so that the view can update the visuals.
         """
         pass
 
 
 class LinearSearch(AlgorithmModel):
+    """
+    Basic linear search algorithm that inherites from AlgorithmModel (abstract class).
+    The run() method works as a generator and yields sub results for the View.
+    """
     def __init__(self, nums, value, value_info):
+        """
+        Initiate the class and init-method from abstract class.
+        
+        Parameters
+        ----------
+
+        value_info : dict
+            categorises values based on keys. The information is then read by the View to visualize the current state.
+
+        nums : list
+            The input values in which the algorithm is gonna look for the target.
+
+        value : int
+            The target value that the algorithm is searching for.
+        """
         super().__init__(value_info)
         self.nums = nums
         self.value = value
 
     def run(self):
+        """
+        Runs the algorithm as a generator.
+        """
         for i in range(len(self.nums)):
             if self.nums[i] == self.value:
                 self.value_info["positive"] = [self.nums[i]]
@@ -38,12 +70,34 @@ class LinearSearch(AlgorithmModel):
 
 
 class BinarySearch(AlgorithmModel):
+
+    """
+    Binary Search algorithm that inherites from abstract class.
+    """
     def __init__(self, nums, value, value_info):
+        """
+        Initiates the class.
+        
+        Parameters
+        ----------
+        
+        value_info : dict
+            categorises values based on keys. The information is then read by the View to visualize the current state.
+
+        nums : list
+            The input values in which the algorithm is gonna look for the target.
+            
+        value : int
+            The target value that the algorithm is searching for.
+        """
         super().__init__(value_info)
         self.original_nums = nums
         self.value = value
 
     def run(self, nums):
+        """
+        Runs the algorithm.
+        """
 
         #get mid index of list
         mid = len(nums)//2
@@ -83,11 +137,29 @@ class BinarySearch(AlgorithmModel):
 
 
 class BubbleSort(AlgorithmModel):
+    """
+    Bubble Sort algorithm that inherites from abstract class.
+    """
     def __init__(self, nums, value_info):
+        """
+        Initiates the class.
+
+        Parameters
+        ----------
+        
+        value_info : dict
+            categorises values based on keys. The information is then read by the View to visualize the current state.
+
+        nums : list
+            The input values that the algorithm is gonna sort.
+        """
         super().__init__(value_info)
         self.nums = nums
 
     def run(self):
+        """
+        Runs the algorithm as a generator. Yields sub results to controller.
+        """
         #bubble sort application
         for i in range(len(self.nums), 0, -1):
             for j in range(i-1):
@@ -116,11 +188,29 @@ class BubbleSort(AlgorithmModel):
 
 
 class SelectionSort(AlgorithmModel):
+    """
+    Selection Sort algorithm that inherites from abstract class.
+    """
     def __init__(self, nums, value_info):
+        """
+        Initiates the class.
+
+        Parameters
+        ----------
+        
+        value_info : dict
+            categorises values based on keys. The information is then read by the View to visualize the current state.
+
+        nums : list
+            The input values that the algorithm is gonna sort.
+        """
         super().__init__(value_info)
         self.nums = nums
 
     def run(self):
+         """
+         Runs the algorithm as a generator. Yields sub results to controller.
+         """
          for i in range(len(self.nums)):
             for j in range(i+1, len(self.nums)):
                 if self.nums[j] < self.nums[i]:
@@ -137,11 +227,29 @@ class SelectionSort(AlgorithmModel):
 
 
 class InsertionSort(AlgorithmModel):
+    """
+    Insertion Sort algorithm implementation.
+    """
     def __init__(self, nums, value_info):
+        """
+        Initiates the class.
+
+        Parameters
+        ----------
+        
+        value_info : dict
+            categorises values based on keys. The information is then read by the View to visualize the current state.
+
+        nums : list
+            The input values that the algorithm is gonna sort.
+        """
         super().__init__(value_info)
         self.nums = nums
     
     def run(self):
+        """
+        Runs the algorithm as a generator. Yields subresults to controller.
+        """
         for i in range(1, len(self.nums)):
             tmp = self.nums[i]
             j = i-1
@@ -165,12 +273,40 @@ class InsertionSort(AlgorithmModel):
 
 
 class Bfs(AlgorithmModel):
+    """
+    Breadth-First-Search algorithm implementation.
+    """
+
     def __init__(self, value_info):
+        """
+        Initiates the class.
+
+        Parameters
+        ----------
+        
+        value_info : dict
+            categorises values based on keys. The information is then read by the View to visualize the current state.
+
+        start_pos : tuple
+            Coordinates where the algorithm starts on the grid (2d list)
+
+        target : int
+            the value the algorithm is searching for.
+        """
         super().__init__(value_info)
         self.start_pos = (0, 0)
         self.target = 2
 
     def run(self, board):
+        """
+        Runs algorithm as a generator. Yields subresults to controller.
+        
+        Parameters
+        ----------
+        
+        board : 2d list
+            represents the grid (graph) that gets traversed by the algorithm.
+        """
         queue = deque([self.start_pos])
         visited = set([self.start_pos])
         directions = [(1, 0), (-1, 0), (0, -1), (0, 1)] #right, left, up, down
@@ -202,13 +338,50 @@ class Bfs(AlgorithmModel):
         return print("Error: No end-pos found")
 
 class Dfs(AlgorithmModel):
+    """
+    Depth-First-Search implementation.
+    """
+
     def __init__(self, value_info):
+        """
+        Initiates the class.
+
+        Parameters
+        ----------
+        
+        value_info : dict
+            categorises values based on keys. The information is then read by the View to visualize the current state.
+
+        visited : set
+            Holds the coordinates that were already visited.
+
+        target : int
+            the value the algorithm is searching for.
+
+        directions : list
+            A list of four tuples that represent each direction the algorithm can move on the 2d grid.
+        """
         super().__init__(value_info)
         self.visited = set()
         self.target = 2
         self.directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
     def run(self, pos_x, pos_y, board):
+        """
+        Runs the algorithm as agenerator. Yields subresults to controller.
+        
+        Parameters
+        ----------
+        
+        board : 2d list
+            represents the grid (graph) that gets traversed by the algorithm.
+        
+        pos_x : int
+            starting postion x-ccordinate.
+        
+        pos_y : int
+            starting position y-coordinate.
+        """
         
         if  pos_x < 0 or pos_y < 0 or pos_x >= board.rows or pos_y >= board.cols or (pos_x, pos_y) in self.visited or board.raster[pos_x][pos_y] == -1:
             return
@@ -235,13 +408,46 @@ class Dfs(AlgorithmModel):
 
 
 class Dijkstras(AlgorithmModel):
+    """
+    Dijkstra algorithm implementation.
+    """
+
     def __init__(self, value_info):
+    
+        """
+        Initiates the class.
+
+        Parameters
+        ----------
+        
+        value_info : dict
+            categorises values based on keys. The information is then read by the View to visualize the current state.
+
+        start_pos : tuple
+            Coordinates where the algorithm starts on the grid (2d list)
+
+        target : int
+            the value the algorithm is searching for.
+        
+        directions : list
+            A list of four tuples that represent each direction the algorithm can move on the 2d grid.
+        """
         super().__init__(value_info)
         self.start_pos = (0, 0)
-        self.directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
         self.target = 2
+        self.directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
     def run(self, board):
+        """
+        Runs the algorithm as a generator. Yields subresults to controller.
+
+        Parameters
+        ----------
+        
+        board : 2d list
+            represents the grid (graph) that gets traversed by the algorithm.
+
+        """
         visited = set([self.start_pos])
         distances = [[float('inf')] * board.cols for _ in range(board.rows)]
         distances[self.start_pos[0]][self.start_pos[1]] = 0

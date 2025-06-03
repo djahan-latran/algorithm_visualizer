@@ -3,7 +3,8 @@ import pygame as pg
 
 
 class AppColours:
-    """ Holds a dictionary that carries the different colors of the app as rgb values.
+    """ 
+    Holds a dictionary that carries the different colors of the app as rgb values.
     """
     def __init__(self):
         #Colors dictionary
@@ -15,7 +16,8 @@ class AppColours:
 
 
 class AppFonts:
-    """ Holds the different textfonts for the app.
+    """ 
+    Holds the different textfonts for the app.
     """
     def __init__(self):
         #Setup fonts
