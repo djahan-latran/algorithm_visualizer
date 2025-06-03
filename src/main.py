@@ -16,9 +16,6 @@ class MainApp:
         #Main window size
         self.screen_size = (1200, 700)
 
-        #Amount of rectangles cols and rows
-        self.rect_amount = (34, 20)
-
     def init_pygame(self):
         """ Initiates the pygame module
         """
