@@ -91,13 +91,13 @@ class AppController:
 
         self.create_generator()
 
-    def grah_traversal_alg_pressed(self, algorithm):
+    def graph_traversal_alg_pressed(self, algorithm):
         """
         If the user selects a graph traversal algorithm, 
         methods to reset states and to create a new generator are called.
         Sets the current algorithm category and the selected algorithm accordingly.
         """
-    def graph_traversal_alg_pressed(self, algorithm):
+                
         #if not board then create one OR reset target_selected to False
         if not self.board:
             self.create_board()

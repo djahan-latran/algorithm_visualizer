@@ -367,13 +367,13 @@ class MenuPanel:
             self.controller.basic_sort_alg_pressed("Insertion Sort")
 
         elif event.ui_element == self.bfs_btn.element:
-            self.controller.grah_traversal_alg_pressed("Breadth-First-Search")
+            self.controller.graph_traversal_alg_pressed("Breadth-First-Search")
 
         elif event.ui_element == self.dfs_btn.element:
-            self.controller.grah_traversal_alg_pressed("Depth-First-Search")
+            self.controller.graph_traversal_alg_pressed("Depth-First-Search")
 
         elif event.ui_element == self.dijkstra_btn.element:
-            self.controller.grah_traversal_alg_pressed("Dijkstra")
+            self.controller.graph_traversal_alg_pressed("Dijkstra")
 
         else:
             pass  #another algorithm can be added here
