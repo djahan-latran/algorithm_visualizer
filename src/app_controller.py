@@ -76,8 +76,6 @@ class AppController:
 
         self.reset_btn_pressed()
 
-        self.create_generator()
-
     def basic_sort_alg_pressed(self, algorithm):
         """
         If the user selects a basic sort algorithm, 
@@ -88,8 +86,6 @@ class AppController:
         self.states.selected_algo = algorithm
         
         self.reset_btn_pressed()
-
-        self.create_generator()
 
     def graph_traversal_alg_pressed(self, algorithm):
         """
@@ -106,8 +102,6 @@ class AppController:
         self.states.selected_algo = algorithm
 
         self.reset_btn_pressed()
-
-        self.create_generator()
 
     def create_values(self):
         """
