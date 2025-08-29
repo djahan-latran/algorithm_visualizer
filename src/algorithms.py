@@ -13,6 +13,9 @@ class AlgorithmModel(ABC):
         value_info : dict
             categorises values based on keys. The information is then read by the View to visualize the current state.
         """
+        if not isinstance(value_info, dict):
+            raise TypeError("Wrong data structure: value_info should be a dictionary with default values")
+        
         self.value_info = value_info
     
     @abstractmethod
@@ -46,6 +49,8 @@ class LinearSearch(AlgorithmModel):
             The target value that the algorithm is searching for.
         """
         super().__init__(value_info)
+        if not isinstance(nums, list):
+            raise TypeError("Wrong data structure: nums should be a list of integers")
         self.nums = nums
         self.value = value
 
@@ -54,20 +59,24 @@ class LinearSearch(AlgorithmModel):
         Runs the algorithm as a generator.
         """
         for i in range(len(self.nums)):
-            if self.nums[i] == self.value:
-                self.value_info["positive"] = [self.nums[i]]
-                
-                yield
+            try:
+                if self.nums[i] == self.value:
+                    self.value_info["positive"] = [self.nums[i]]
+                    
+                    yield
 
-                break
-            else:
-                self.value_info["neutral"] = [self.nums[i]]
+                    break
+                else:
+                    self.value_info["neutral"] = [self.nums[i]]
 
-                yield
+                    yield
 
-                self.value_info["negative"].append(self.nums[i])
-                self.value_info["neutral"] = []
+                    self.value_info["negative"].append(self.nums[i])
+                    self.value_info["neutral"] = []
 
+            except KeyError as e:
+                print(f"A key is missing in value_info: {e}")
+                raise
 
 class BinarySearch(AlgorithmModel):
 
@@ -91,6 +100,8 @@ class BinarySearch(AlgorithmModel):
             The target value that the algorithm is searching for.
         """
         super().__init__(value_info)
+        if not isinstance(nums, list):
+            raise TypeError("Wrong data structure: nums should be a list of integers")
         self.original_nums = nums
         self.value = value
 
@@ -98,42 +109,48 @@ class BinarySearch(AlgorithmModel):
         """
         Runs the algorithm.
         """
-
+        if not isinstance(nums, list):
+            raise TypeError("Wrong data structure: nums should be a list of integers")
+        
         #get mid index of list
         mid = len(nums)//2
 
         self.value_info["neutral"] = [nums[mid]]
 
         yield
+        try:
+            if nums[mid] == self.value:
+                self.value_info["positive"] = [self.value]
+                for i in range(len(nums)):
+                    if nums[i] != self.value:
+                        self.value_info["negative"].append(nums[i])
 
-        if nums[mid] == self.value:
-            self.value_info["positive"] = [self.value]
-            for i in range(len(nums)):
-                if nums[i] != self.value:
+                yield
+
+            elif nums[mid] < self.value:
+                for i in range(mid):
                     self.value_info["negative"].append(nums[i])
+                self.value_info["negative"].append(nums[mid])
 
-            yield
+                yield
 
-        elif nums[mid] < self.value:
-            for i in range(mid):
-                self.value_info["negative"].append(nums[i])
-            self.value_info["negative"].append(nums[mid])
+                right = nums[mid:]
 
-            yield
+                yield from self.run(right)
 
-            right = nums[mid:]
+            else:
+                for i in range(mid, len(nums)):
+                    self.value_info["negative"].append(nums[i])
+                
+                yield
 
-            yield from self.run(right)
+                left = nums[:mid]
 
-        else:
-            for i in range(mid, len(nums)):
-                self.value_info["negative"].append(nums[i])
-            
-            yield
+                yield from self.run(left)
 
-            left = nums[:mid]
-
-            yield from self.run(left)
+        except KeyError as e:
+            print(f"A key is missing in value_info: {e}")
+            raise
 
 
 class BubbleSort(AlgorithmModel):
@@ -154,6 +171,8 @@ class BubbleSort(AlgorithmModel):
             The input values that the algorithm is gonna sort.
         """
         super().__init__(value_info)
+        if not isinstance(nums, list):
+            raise TypeError("Wrong data structure: nums should be a list of integers")
         self.nums = nums
 
     def run(self):
@@ -161,31 +180,35 @@ class BubbleSort(AlgorithmModel):
         Runs the algorithm as a generator. Yields sub results to controller.
         """
         #bubble sort application
-        for i in range(len(self.nums), 0, -1):
-            for j in range(i-1):
-                if self.nums[j] > self.nums[j+1]:
-                    tmp = self.nums[j]
-                    self.nums[j] = self.nums[j+1]
-                    self.nums[j+1] = tmp
+        try:
+            for i in range(len(self.nums), 0, -1):
+                for j in range(i-1):
+                    if self.nums[j] > self.nums[j+1]:
+                        tmp = self.nums[j]
+                        self.nums[j] = self.nums[j+1]
+                        self.nums[j+1] = tmp
+                    
+                    #condition to draw unsorted bar graphs during the 'bubble process'
+                    if j < i-2:
+                        #indices of graphs that are currently 'bubbled'
+                        self.value_info["neutral"] = [self.nums[j], self.nums[j+1]]
+
+                        #yield info to visualizer
+                        yield
+
+                #store the value that got sorted
+                self.value_info["positive"].append(self.nums[j+1])
                 
-                #condition to draw unsorted bar graphs during the 'bubble process'
-                if j < i-2:
-                    #indices of graphs that are currently 'bubbled'
-                    self.value_info["neutral"] = [self.nums[j], self.nums[j+1]]
+                #edge condition to declare leftest bar graph as 'sorted' at the end
+                if i == 1:
+                    self.value_info["positive"].append(self.nums[j])
+                
+                #yield info to visualizer
+                yield
 
-                    #yield info to visualizer
-                    yield
-
-            #store the value that got sorted
-            self.value_info["positive"].append(self.nums[j+1])
-            
-            #edge condition to declare leftest bar graph as 'sorted' at the end
-            if i == 1:
-                self.value_info["positive"].append(self.nums[j])
-            
-            #yield info to visualizer
-            yield
-
+        except KeyError as e:
+            print(f"A key is missing in value_info: {e}")
+            raise
 
 class SelectionSort(AlgorithmModel):
     """
@@ -205,26 +228,32 @@ class SelectionSort(AlgorithmModel):
             The input values that the algorithm is gonna sort.
         """
         super().__init__(value_info)
+        if not isinstance(nums, list):
+            raise TypeError("Wrong data structure: nums should be a list of integers")
         self.nums = nums
 
     def run(self):
-         """
-         Runs the algorithm as a generator. Yields sub results to controller.
-         """
-         for i in range(len(self.nums)):
-            for j in range(i+1, len(self.nums)):
-                if self.nums[j] < self.nums[i]:
-                    tmp = self.nums[j]
-                    self.nums[j] = self.nums[i]
-                    self.nums[i] = tmp
-                self.value_info["neutral"] = [self.nums[i], self.nums[j]]
+        """
+        Runs the algorithm as a generator. Yields sub results to controller.
+        """
+        try:
+            for i in range(len(self.nums)):
+                for j in range(i+1, len(self.nums)):
+                    if self.nums[j] < self.nums[i]:
+                        tmp = self.nums[j]
+                        self.nums[j] = self.nums[i]
+                        self.nums[i] = tmp
+                    self.value_info["neutral"] = [self.nums[i], self.nums[j]]
+                    
+                    yield
                 
+                self.value_info["positive"].append(self.nums[i])
+
                 yield
-            
-            self.value_info["positive"].append(self.nums[i])
 
-            yield
-
+        except KeyError as e:
+            print(f"A key is missing in value_info: {e}")
+            raise
 
 class InsertionSort(AlgorithmModel):
     """
@@ -244,32 +273,39 @@ class InsertionSort(AlgorithmModel):
             The input values that the algorithm is gonna sort.
         """
         super().__init__(value_info)
+        if not isinstance(nums, list):
+            raise TypeError("Wrong data structure: nums should be a list of integers")
         self.nums = nums
     
     def run(self):
         """
         Runs the algorithm as a generator. Yields subresults to controller.
         """
-        for i in range(1, len(self.nums)):
-            tmp = self.nums[i]
-            j = i-1
-            while tmp < self.nums[j] and j >= 0:
-                self.nums[j+1] = self.nums[j]
-                self.nums[j] = tmp
+        try:
+            for i in range(1, len(self.nums)):
+                tmp = self.nums[i]
+                j = i-1
+                while tmp < self.nums[j] and j >= 0:
+                    self.nums[j+1] = self.nums[j]
+                    self.nums[j] = tmp
 
-                if j > 0:
-                    self.value_info["neutral"] = [self.nums[j-1], self.nums[j]]
-                else:
-                    self.value_info["neutral"] = [self.nums[j]]
+                    if j > 0:
+                        self.value_info["neutral"] = [self.nums[j-1], self.nums[j]]
+                    else:
+                        self.value_info["neutral"] = [self.nums[j]]
 
-                yield
+                    yield
 
-                j -= 1
+                    j -= 1
 
-        sorted_values = [value for value in self.nums]
-        self.value_info["positive"] = sorted_values
+            sorted_values = [value for value in self.nums]
+            self.value_info["positive"] = sorted_values
 
-        yield
+            yield
+
+        except KeyError as e:
+            print(f"A key is missing in value_info: {e}")
+            raise
 
 
 class Bfs(AlgorithmModel):
@@ -335,7 +371,7 @@ class Bfs(AlgorithmModel):
                     queue.append((new_x, new_y))
                     visited.add((new_x, new_y))
 
-        return print("Error: No end-pos found")
+        return
 
 class Dfs(AlgorithmModel):
     """

@@ -32,7 +32,10 @@ class MainApp:
 
         file_directory = os.path.dirname(__file__)
         file_path = os.path.join(file_directory, "gui", "themes.json")
-        self.pg_manager.ui_theme.load_theme(file_path)
+        try:
+            self.pg_manager.ui_theme.load_theme(file_path)
+        except FileNotFoundError:
+            print("The theme file for the pg_manager could not be found")
     
     def get_curr_time(self):
         """ Returns the current app-time

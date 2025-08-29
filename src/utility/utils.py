@@ -16,7 +16,10 @@ class Parameters:
         Initializes parameters by size.
         """
         #Initialize size and speed attributes
-        self.size = size
+        if size == 0:
+            raise ValueError("The input-list size cannot be 0")
+        else:
+            self.size = size
 
     def create_values(self):
         """
@@ -47,7 +50,11 @@ class Board:
         Fills the grid with values of '1'.
         """
         #Create a 2d matrix that represents a checkerboard
-
+        if rect_amount[0] == 0 or rect_amount[1] == 0:
+            raise ValueError("The 2D-grid has an axis value of 0. This causes it to be 1D. " \
+                            "Please adjust parameter to be 0 < "
+                            )
+        
         self.rows = rect_amount[1]
         self.cols = rect_amount[0]
 
@@ -83,9 +90,16 @@ class FileReader:
         Initiates the FileReader class.
         """
         file_path = os.path.join(directory, "gui", filename)
-
-        with open(file_path, "r") as file:
-            self.info_texts = yaml.safe_load(file)
+        
+        try:
+            with open(file_path, "r") as file:
+                try:
+                    self.info_texts = yaml.safe_load(file)
+                except yaml.YAMLError as e:
+                    raise yaml.YAMLError(f"Error with the yaml file: {e.filename}")
+                
+        except FileNotFoundError as e:
+            raise FileNotFoundError(f"The file {filename} could not be found")
 
     def get_text(self, algorithm):
         """

@@ -31,12 +31,21 @@ class AppController:
         """
         self.states = AppStates()
         file_directory = os.path.dirname(os.path.abspath(__file__)) 
-        self.file_reader_text = FileReader(file_directory, 
-                                           "info_texts.yaml"
-                                           )
-        self.file_reader_code = FileReader(file_directory,
-                                           "code_texts.yaml"
-                                           )
+        
+        try:
+            self.file_reader_text = FileReader(file_directory, 
+                                            "info_texts.yaml"
+                                            )
+            self.file_reader_code = FileReader(file_directory,
+                                            "code_texts.yaml"
+                                            )
+        except FileNotFoundError as e:
+            print(f"File could not be found: {e}")
+
+            #Default values in case of FileNotFoundError
+            self.file_reader_text = None
+            self.file_reader_code = None
+
         self.board = None
         self.parameters = None
     
@@ -240,48 +249,112 @@ class AppController:
             # Checks what algorithm in that category is selected
             if self.states.selected_algo == "Linear Search":
                 self.get_text_from_file()
-                lin_search = LinearSearch(self.states.values, self.states.value_to_find, self.states.draw_bg_info)
-                self.states.algo_generator = lin_search.run()
+                try:
+                    lin_search = LinearSearch(self.states.values, self.states.value_to_find, self.states.draw_bg_info)
+
+                    try:
+                        self.states.algo_generator = lin_search.run()
+                    except KeyError as e:
+                        print(f"Error in algorithm: {e}")
+
+                except TypeError as e:
+                    print(f"Error with the input data: {e}")
 
             elif self.states.selected_algo == "Binary Search":
                 self.get_text_from_file()
                 self.states.values.sort()
-                bin_search = BinarySearch(self.states.values, self.states.value_to_find, self.states.draw_bg_info)
-                self.states.algo_generator = bin_search.run(self.states.values)
+                try:
+                    bin_search = BinarySearch(self.states.values, self.states.value_to_find, self.states.draw_bg_info)
+
+                    try:
+                        self.states.algo_generator = bin_search.run(self.states.values)
+                    except KeyError as e:
+                        print(f"Error in algorithm: {e}")
+
+                except TypeError as e:
+                    print(f"Error with the input data: {e}")
 
         elif self.states.curr_algo_cat == "Basic Sort":
 
             if self.states.selected_algo == "Bubble Sort":
                 self.get_text_from_file()
-                bubb_sort = BubbleSort(self.states.values, self.states.draw_bg_info)
-                self.states.algo_generator = bubb_sort.run()
+                try:
+                    bubb_sort = BubbleSort(self.states.values, self.states.draw_bg_info)
+
+                    try:
+                        self.states.algo_generator = bubb_sort.run()
+                    except KeyError as e:
+                        print(f"Error in algorithm: {e}")
+
+                except TypeError as e:
+                    print(f"Error with the input data: {e}")
 
             elif self.states.selected_algo == "Selection Sort":
                 self.get_text_from_file()
-                sel_sort = SelectionSort(self.states.values, self.states.draw_bg_info)
-                self.states.algo_generator = sel_sort.run()
-            
+                try:
+                    sel_sort = SelectionSort(self.states.values, self.states.draw_bg_info)
+                    
+                    try:
+                        self.states.algo_generator = sel_sort.run()
+                    except KeyError as e:
+                        print(f"Error in algorithm: {e}")
+                        
+                except TypeError as e:
+                    print(f"Error with the input data: {e}")  
+
             elif self.states.selected_algo == "Insertion Sort":
                 self.get_text_from_file()
-                insert_sort = InsertionSort(self.states.values, self.states.draw_bg_info)
-                self.states.algo_generator = insert_sort.run()
+                try:
+                    insert_sort = InsertionSort(self.states.values, self.states.draw_bg_info)
+
+                    try:
+                        self.states.algo_generator = insert_sort.run()
+                    except KeyError as e:
+                        print(f"Error in algorithm: {e}")
+
+                except TypeError as e:
+                    print(f"Error with the input data: {e}")
         
         elif self.states.curr_algo_cat == "Graph Traversal":
 
             if self.states.selected_algo == "Breadth-First-Search":
                 self.get_text_from_file()
-                bf_search = Bfs(self.states.draw_pf_info)
-                self.states.algo_generator = bf_search.run(self.board)
+                try:
+                    bf_search = Bfs(self.states.draw_pf_info)
+
+                    try:
+                        self.states.algo_generator = bf_search.run(self.board)
+                    except KeyError as e:
+                        print(f"Error in algorithm: {e}")
+
+                except TypeError as e:
+                    print(f"Error with the input data: {e}")
 
             elif self.states.selected_algo == "Depth-First-Search":
                 self.get_text_from_file()
-                df_search = Dfs(self.states.draw_pf_info)
-                self.states.algo_generator = df_search.run(0, 0, self.board)
+                try:
+                    df_search = Dfs(self.states.draw_pf_info)
+
+                    try:
+                        self.states.algo_generator = df_search.run(0, 0, self.board)
+                    except KeyError as e:
+                        print(f"Error in algorithm: {e}")
+
+                except TypeError as e:
+                    print(f"Error with the input data: {e}")
             
             elif self.states.selected_algo == "Dijkstra":
                 self.get_text_from_file()
-                dijkstra_search = Dijkstras(self.states.draw_pf_info)
-                self.states.algo_generator = dijkstra_search.run(self.board)
+                try:
+                    dijkstra_search = Dijkstras(self.states.draw_pf_info)
+
+                    try:
+                        self.states.algo_generator = dijkstra_search.run(self.board)
+                    except KeyError as e:
+                        print(f"Error in algorithm: {e}")
+
+                except TypeError as e:
+                    print(f"Error with the input data: {e}")
     
     def set_target_on_board(self, x, y):
         """
