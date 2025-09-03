@@ -127,6 +127,10 @@ class BinarySearch(AlgorithmModel):
 
                 yield
 
+            elif nums[mid] != self.value and len(nums) == 1:
+                self.value_info["positive"] = []
+                return
+
             elif nums[mid] < self.value:
                 for i in range(mid):
                     self.value_info["negative"].append(nums[i])
@@ -354,12 +358,12 @@ class Bfs(AlgorithmModel):
 
         while queue:
             x, y = queue.popleft()
-            current = (x, y)
+            self.current = (x, y)
 
             if board.raster[x][y] == self.target:
-                return 
+                return
 
-            self.value_info["current"] = current
+            self.value_info["current"] = self.current
             self.value_info["visited"] = visited
             
             yield
