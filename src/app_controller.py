@@ -1,9 +1,9 @@
 """Controls the app logic. Delegates what to do"""
 
 import os
-from algorithms import *
-from app_states import AppStates
-from utility.utils import Parameters, Board, FileReader
+from src.algorithms import *
+from src.app_states import AppStates
+from src.utility.utils import Parameters, Board, FileReader
 
 
 class AppController:
