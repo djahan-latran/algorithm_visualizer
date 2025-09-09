@@ -1,20 +1,39 @@
-"""A gui manager to bundle the different panel sections and gui elements
-"""
-from gui.gui_panels import MainPanel, MenuPanel, AnimationPanel, CodePanel, SettingsPanel, InfoPanel
-from utility.styles import AppColours, AppFonts
+"""A gui manager to bundle the different panel sections and gui elements"""
+from src.gui.gui_panels import MainPanel, MenuPanel, AnimationPanel, CodePanel, SettingsPanel, InfoPanel
+from src.utility.styles import AppColours, AppFonts
 
 
 class GuiManager:
-    """The class that initiates the different sections of the gui.
     """
+    Initiates and bundles the different panel sections.
+    """
+    
     def __init__(self, controller, pg_manager):
-        """ Initiates base attributes. Delegates the controller and the pygame_gui manager.
         """
-        # Delegate a controller and a pygame_gui manager
+        Initiates the GuiManager instance.
+
+        Parameters
+        ----------
+
+        controller : class instance
+            Controller instance for app logic
+
+        pg_manager : class instance
+            the pygame_gui manager that is needed to update the gui elements.
+
+        Attributes
+        ----------
+
+        fonts : class instance
+            AppFonts instance to pass to the panels
+        
+        colours : class instance
+            AppColours instance to pass to the panels
+        """
         self.controller = controller
         self.pg_manager = pg_manager
         
-        # Fonts and colors instance
+        #Fonts and colors instance
         self.fonts = AppFonts()
         self.colours = AppColours()
     

@@ -3,7 +3,7 @@
 import os
 import pygame_gui as pg_gui 
 import pygame as pg
-from gui.gui_elements import Button, ScrollContainer, Slider, Panel, TextWindow
+from src.gui.gui_elements import Button, ScrollContainer, Slider, Panel, TextWindow
 
 
 class MainPanel:

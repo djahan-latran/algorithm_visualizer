@@ -90,7 +90,6 @@ class FileReader:
         Initiates the FileReader class.
         """
         file_path = os.path.join(directory, "gui", filename)
-        
         try:
             with open(file_path, "r") as file:
                 try:

@@ -2,9 +2,9 @@
 import os
 import pygame as pg
 import pygame_gui as pg_gui
-from algorithms import *
-from gui.gui_manager import GuiManager
-from app_controller import AppController
+from src.algorithms import *
+from src.gui.gui_manager import GuiManager
+from src.app_controller import AppController
 import time
 
 
@@ -31,7 +31,8 @@ class MainApp:
         self.pg_manager = pg_gui.UIManager((self.screen_size))
 
         file_directory = os.path.dirname(__file__)
-        file_path = os.path.join(file_directory, "gui", "themes.json")
+        file_path = os.path.join(file_directory,"src", "gui", "themes.json")
+
         try:
             self.pg_manager.ui_theme.load_theme(file_path)
         except FileNotFoundError:
