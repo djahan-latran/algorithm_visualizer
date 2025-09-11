@@ -87,17 +87,7 @@ class FileReader:
         """
         Initiates the FileReader class.
         """
-        def source_path(relative_path):
-            """
-            Needed so Pyinstaller gets the right path.
-            """
-            try:
-                base_path = sys._MEIPASS
-            except Exception:
-                base_path = os.path.abspath(".")
-
-            return os.path.join(base_path, relative_path)
-        
+    
         file_path = source_path("src/gui/" + filename)
         
         try:
@@ -152,3 +142,15 @@ class FileReader:
         default_font = f"<font face='verdana' color='#ffffff' size=4>{code_text}</font>"
 
         return default_font
+
+
+def source_path(relative_path):
+    """
+    Helper method that is needed for Pyinstaller to get the right paths to files that have to be loaded.
+    """
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
