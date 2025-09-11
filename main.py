@@ -30,7 +30,7 @@ class MainApp:
         #Initiate the pg manager and load themes
         self.pg_manager = pg_gui.UIManager((self.screen_size))
 
-        file_directory = os.path.dirname(__file__)
+        file_directory = os.path.dirname(os.path.abspath(__file__))
         file_path = os.path.join(file_directory,"src", "gui", "themes.json")
 
         try:
