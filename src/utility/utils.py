@@ -1,14 +1,11 @@
-import random
-import yaml
-import os
-import re
+import random, yaml, os, re
 from pygments import highlight
 from pygments.lexers import PythonLexer
 from pygments.formatters import HtmlFormatter
 
 class Parameters:
     """
-    This class creates the values that getfed to the algorithms.
+    This class creates the values that get fed to the algorithms.
     """
 
     def __init__(self, size):
@@ -95,7 +92,7 @@ class FileReader:
                 try:
                     self.info_texts = yaml.safe_load(file)
                 except yaml.YAMLError as e:
-                    raise yaml.YAMLError(f"Error with the yaml file: {e.filename}")
+                    raise yaml.YAMLError(f"Error with the yaml file: {filename}")
                 
         except FileNotFoundError as e:
             raise FileNotFoundError(f"The file {filename} could not be found")
