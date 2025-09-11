@@ -1,5 +1,5 @@
 """The main application file that should be run"""
-import os
+import os, sys
 import pygame as pg
 import pygame_gui as pg_gui
 from src.algorithms import *
@@ -30,9 +30,18 @@ class MainApp:
         #Initiate the pg manager and load themes
         self.pg_manager = pg_gui.UIManager((self.screen_size))
 
-        file_directory = os.path.dirname(os.path.abspath(__file__))
-        file_path = os.path.join(file_directory,"src", "gui", "themes.json")
+        def source_path(relative_path):
+            """
+            Needed so Pyinstaller gets the right path.
+            """
+            try:
+                base_path = sys._MEIPASS
+            except Exception:
+                base_path = os.path.abspath(".")
 
+            return os.path.join(base_path, relative_path)
+
+        file_path = source_path("src/gui/themes.json")
         try:
             self.pg_manager.ui_theme.load_theme(file_path)
         except FileNotFoundError:

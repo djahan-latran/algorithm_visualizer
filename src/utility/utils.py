@@ -2,6 +2,7 @@ import random, yaml, os, re
 from pygments import highlight
 from pygments.lexers import PythonLexer
 from pygments.formatters import HtmlFormatter
+import os, sys
 
 class Parameters:
     """
@@ -86,7 +87,19 @@ class FileReader:
         """
         Initiates the FileReader class.
         """
-        file_path = os.path.join(directory, "gui", filename)
+        def source_path(relative_path):
+            """
+            Needed so Pyinstaller gets the right path.
+            """
+            try:
+                base_path = sys._MEIPASS
+            except Exception:
+                base_path = os.path.abspath(".")
+
+            return os.path.join(base_path, relative_path)
+        
+        file_path = source_path("src/gui/" + filename)
+        
         try:
             with open(file_path, "r") as file:
                 try:
