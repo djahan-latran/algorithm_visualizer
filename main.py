@@ -6,7 +6,7 @@ from src.algorithms import *
 from src.gui.gui_manager import GuiManager
 from src.app_controller import AppController
 import time
-
+from src.utility.utils import source_path
 
 class MainApp:
     """ Initiates all the necessary moduls. Holds the main application loop.
@@ -30,18 +30,8 @@ class MainApp:
         #Initiate the pg manager and load themes
         self.pg_manager = pg_gui.UIManager((self.screen_size))
 
-        def source_path(relative_path):
-            """
-            Needed so Pyinstaller gets the right path.
-            """
-            try:
-                base_path = sys._MEIPASS
-            except Exception:
-                base_path = os.path.abspath(".")
-
-            return os.path.join(base_path, relative_path)
-
         file_path = source_path("src/gui/themes.json")
+
         try:
             self.pg_manager.ui_theme.load_theme(file_path)
         except FileNotFoundError:

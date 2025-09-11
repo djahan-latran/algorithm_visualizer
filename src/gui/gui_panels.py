@@ -1,10 +1,10 @@
 """This module holds the different sections/panels of the user interface as classes and their methods.
 """
-import os
+import os, sys
 import pygame_gui as pg_gui 
 import pygame as pg
 from src.gui.gui_elements import Button, ScrollContainer, Slider, Panel, TextWindow
-
+from src.utility.utils import source_path
 
 class MainPanel:
     """ The MainPanel holds the pygame display(screen) and the header of the application
@@ -66,12 +66,10 @@ class MainPanel:
     def render_icon(self):
         """ Loads and draws the application icon
         """
-        # Get current filepath
-        file_directory = os.path.dirname(os.path.abspath(__file__))
         
-        # Path to the icon bmp from current directory
-        file_path = "../../assets/icon.bmp"
-        file_path = os.path.join(file_directory, file_path)
+        # Path to the icon bmp
+        assets_path = "assets/icon.bmp"
+        file_path = source_path(assets_path)
 
         # Load image and rescale it
         self.icon = pg.image.load(file_path)
