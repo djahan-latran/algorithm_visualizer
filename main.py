@@ -8,6 +8,7 @@ from src.app_controller import AppController
 import time
 from src.utility.utils import source_path
 
+
 class MainApp:
     """ Initiates all the necessary moduls. Holds the main application loop.
         Starts and ends the application.
@@ -30,7 +31,7 @@ class MainApp:
         #Initiate the pg manager and load themes
         self.pg_manager = pg_gui.UIManager((self.screen_size))
 
-        file_path = source_path("src/gui/themes.json")
+        file_path = source_path(os.path.join("src", "gui", "themes.json"))
 
         try:
             self.pg_manager.ui_theme.load_theme(file_path)
