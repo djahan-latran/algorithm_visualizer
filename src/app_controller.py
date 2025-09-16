@@ -3,7 +3,7 @@
 import os
 from src.algorithms import *
 from src.app_states import AppStates
-from src.utility.utils import Parameters, Board, FileReader
+from src.utility.utils import Parameters, Board, FileReader, source_path
 
 
 class AppController:
@@ -30,8 +30,9 @@ class AppController:
         
         """
         self.states = AppStates()
-        file_directory = os.path.dirname(os.path.abspath(__file__)) 
-        
+
+        file_directory = source_path(os.path.join("src", "gui"))
+
         try:
             self.file_reader_text = FileReader(file_directory, 
                                             "info_texts.yaml"
