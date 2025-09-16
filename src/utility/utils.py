@@ -87,9 +87,8 @@ class FileReader:
         """
         Initiates the FileReader class.
         """
-    
-        file_path = source_path("src/gui/" + filename)
-        
+        file_path = os.path.join(directory, filename)
+
         try:
             with open(file_path, "r") as file:
                 try:
@@ -146,11 +145,13 @@ class FileReader:
 
 def source_path(relative_path):
     """
-    Helper method that is needed for Pyinstaller to get the right paths to files that have to be loaded.
+    Helper method that is needed if PyInstaller is used, so it gets the right paths.
     """
     try:
+        # Used by Pyinstaller
         base_path = sys._MEIPASS
     except Exception:
+        # When executed in repo
         base_path = os.path.abspath(".")
 
     return os.path.join(base_path, relative_path)
