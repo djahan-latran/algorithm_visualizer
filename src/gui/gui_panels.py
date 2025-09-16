@@ -16,6 +16,14 @@ class MainPanel:
         self.screen_size = (1200, 700)
         self.screen = pg.display.set_mode(self.screen_size)
 
+        # Path to the icon bmp
+        assets_path = os.path.join("assets", "icon.bmp")
+        file_path = source_path(assets_path)
+
+        # Load image and rescale
+        self.icon = pg.image.load(file_path)
+        self.icon = pg.transform.scale(self.icon, (45, 40))
+
         # Caption
         pg.display.set_caption("AlgoLab")
         
@@ -52,53 +60,53 @@ class MainPanel:
         self.sel_algo_name_rect.bottomleft = self.algo_name_loc
 
     def render_settings(self):
-        """ renders the settings word
+        """ 
+        renders the settings word
         """
         self.settings_text = self.fonts.headline.render("Settings", True, self.colours.values["text_cl"])
         self.settings_text_rect = self.settings_text.get_rect()
         self.settings_text_rect.bottomleft = self.settings_loc
    
     def render_dark_bar(self):
-        """ draws the header bar
+        """ 
+        draws the header bar
         """
         pg.draw.rect(self.screen, self.colours.values["header_cl"], self.header_rect)
 
     def render_icon(self):
-        """ Loads and draws the application icon
+        """ 
+        Draws the application icon
         """
-        
-        # Path to the icon bmp
-        assets_path = "assets/icon.bmp"
-        file_path = source_path(assets_path)
-
-        # Load image and rescale it
-        self.icon = pg.image.load(file_path)
-        self.icon = pg.transform.scale(self.icon, (45, 40))
         self.icon_rect = self.icon.get_rect()
         self.icon_rect.topleft = self.icon_loc
 
     def blit_icon(self):
-        """ Blit icon to screen
+        """ 
+        Blit icon to screen
         """
         self.screen.blit(self.icon, self.icon_rect)
 
     def blit_selected_algo_name(self):
-        """ blits currently selected algorithm name onto screen
+        """ 
+        blits currently selected algorithm name onto screen
         """
         self.screen.blit(self.sel_algo_name, self.sel_algo_name_rect)
 
     def blit_name(self):
-        """ blits the application name onto screen
+        """ 
+        blits the application name onto screen
         """
         self.screen.blit(self.app_name, self.app_name_rect)
 
     def blit_settings(self):
-        """ blits settings word onto screen
+        """ 
+        blits settings word onto screen
         """
         self.screen.blit(self.settings_text, self.settings_text_rect)
 
     def render_init_screen(self):
-        """ renders the first main screen of the application when opened
+        """ 
+        renders the first main screen of the application when opened
         """
         self.render_icon()
         self.render_app_name()
@@ -107,7 +115,8 @@ class MainPanel:
         self.blit_icon()
 
     def render_active_screen(self):
-        """ renders the main screen format after an algorithmn got selected
+        """ 
+        renders the main screen format after an algorithmn got selected
         """
         self.render_dark_bar()
         self.render_icon()
@@ -119,7 +128,8 @@ class MainPanel:
         self.blit_icon()
     
     def update(self):
-        """ updates the main screen
+        """ 
+        updates the main screen
         """
         if self.controller.states.selected_algo:
             self.render_active_screen()
@@ -128,12 +138,14 @@ class MainPanel:
 
 
 class MenuPanel:
-    """ The MenuPanel holds the scroll panels and button for the different algorithms and categories.
+    """ 
+    The MenuPanel holds the scroll panels and button for the different algorithms and categories.
     """
 
     def __init__(self, manager, controller):
-        """ Initiates MenuPanel and set parameters like button size and widths and algorithm categories.
-            Delegates the pygame_gui manager and the AppController.
+        """ 
+        Initiates MenuPanel and set parameters like button size and widths and algorithm categories.
+        Delegates the pygame_gui manager and the AppController.
         """
         self.manager = manager
         self.controller = controller
@@ -148,7 +160,8 @@ class MenuPanel:
         self.btn_height = 45
 
     def create_basic_sort_btns(self):
-        """ Creates the buttons for the different basic sort algorithms and adds them to their categorie list.
+        """ 
+        Creates the buttons for the different basic sort algorithms and adds them to their categorie list.
         """
 
         # Category button that is not clickable
@@ -198,7 +211,8 @@ class MenuPanel:
         self.basic_sorts_scroll_cont.element.set_scrollable_area_dimensions((self.btn_width, self.btn_height * (len(self.basic_sort_algs))))
 
     def create_basic_sort_cont(self):
-        """Creates the ScrollContainer for basic sort algorithms and the necessary Panel for it.
+        """
+        Creates the ScrollContainer for basic sort algorithms and the necessary Panel for it.
         """
 
         # Create basic-sorts scroll container and scroll panel inside
